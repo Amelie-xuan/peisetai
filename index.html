@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>配色台</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -242,8 +242,35 @@ details.more[open] summary svg{transform:rotate(90deg)}
 .mtab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px}
 .mtab svg{width:18px;height:18px}
 
-.tile .mini{max-width:100%}
-@media (max-width:520px){ .tile .mini.std,.tile .mini.cmp{width:100%;max-width:330px} }
+.mat > .pv{flex:none}
+/* columns */
+@media (max-width:759px){
+  .grid[data-cols="1"]{grid-template-columns:1fr}
+  .grid[data-cols="2"]{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .grid[data-cols="3"]{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .wrap{padding-left:12px;padding-right:12px}
+}
+@media (min-width:760px){
+  .grid[data-cols="2"]{grid-template-columns:repeat(auto-fill,minmax(236px,1fr))}
+  .grid[data-cols="3"]{grid-template-columns:repeat(auto-fill,minmax(188px,1fr))}
+}
+.compact .tile{padding:7px;border-radius:18px}
+.compact .mat{padding:8px 6px;border-radius:13px}
+.compact .info{padding:8px 3px 0}
+.compact .name{font-size:14.5px}
+.compact .chip{font-size:10.5px;line-height:17px;padding:0 6px}
+.compact .chip.tone{display:none}
+.compact .note{font-size:12.5px;line-height:1.4;min-height:23px;padding:2px 6px}
+.compact .acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding-top:8px}
+.compact .apply{grid-column:1/-1;height:36px;border-radius:11px;font-size:14px}
+.compact .apply .long{display:none}
+.compact .apply svg{width:16px;height:16px}
+.compact .sq{width:auto;height:34px;border-radius:11px}
+.compact .sq svg{width:17px;height:17px}
+.compact .sq.armed{padding:0 2px;font-size:12px}
+.grid[data-cols="3"] .name{font-size:13px}
+.grid[data-cols="3"] .note:placeholder-shown:not(:focus){display:none}
+.grid[data-cols="3"] .chip.mine{display:none}
 </style>
 </head>
 <body>
@@ -253,6 +280,7 @@ details.more[open] summary svg{transform:rotate(90deg)}
     <div class="titlebar">
       <h1>配色台</h1>
       <span class="count" id="count"></span>
+      <button class="ibtn" id="colBtn" aria-label="切换栏数"></button>
       <button class="ibtn" id="menuBtn" aria-label="更多操作"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
       <button class="pbtn" id="importOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg>导入</button>
     </div>
@@ -535,6 +563,27 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&openSheetId) closeS
 
 /* ---------- gallery ---------- */
 const editing={};   // id -> draft colors (unsaved)
+const COLS_KEY="sr-color-board-cols";
+let cols=(()=>{try{return +localStorage.getItem(COLS_KEY)||2}catch(e){return 2}})();
+function colIcon(n){
+  const w=(16-(n-1)*2)/n; let r="";
+  for(let i=0;i<n;i++) r+=`<rect x="${4+i*(w+2)}" y="4" width="${w}" height="16" rx="1.6"/>`;
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">${r}</svg>`;
+}
+function syncCols(){
+  const g=$("#grid"); g.dataset.cols=cols; g.classList.toggle("compact",cols>1);
+  const b=$("#colBtn"); b.innerHTML=colIcon(cols); b.setAttribute("aria-label",`当前${["","单","两","三"][cols]}栏，点按切换`);
+}
+function fitPreviews(){
+  const mobile=window.innerWidth<760;
+  document.querySelectorAll("#grid .mat").forEach(m=>{
+    const pv=m.firstElementChild; if(!pv) return;
+    pv.style.zoom=1;
+    const cs=getComputedStyle(m), avail=m.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+    const max=(mobile&&cols===1)?1.42:1;
+    pv.style.zoom=Math.min(max,avail/pv.offsetWidth).toFixed(3);
+  });
+}
 let q="";
 function tile(it){
   const c=editing[it.id]||parseColors(it.url);
@@ -547,12 +596,12 @@ function tile(it){
         <input class="name" value="${esc(it.name)}" aria-label="名字" maxlength="40">
         ${editing[it.id]?'<span class="chip draft">改色未保存</span>':""}
         ${it.mine?'<span class="chip mine">我的</span>':""}
-        <span class="chip">${tone}</span>
+        <span class="chip tone">${tone}</span>
       </div>
       <textarea class="note" rows="1" placeholder="添加备注" aria-label="备注">${esc(it.note||"")}</textarea>
     </div>
     <div class="acts">
-      <a class="apply" data-act="apply" href="${esc(it.url)}">${ICON.open}应用到小火箭</a>
+      <a class="apply" data-act="apply" href="${esc(it.url)}">${ICON.open}应用<span class="long">到小火箭</span></a>
       <button class="sq" data-act="edit" aria-label="改颜色" title="改颜色">${ICON.brush}</button>
       <button class="sq" data-act="copy" aria-label="复制链接" title="复制链接">${ICON.copy}</button>
       <button class="sq" data-act="del" aria-label="删除" title="删除">${ICON.trash}</button>
@@ -572,6 +621,7 @@ function render(){
   if(!list.length){grid.innerHTML=`<div class="empty"><h2>没有找到</h2><p>没有名字或备注包含“${esc(q.trim())}”的配色。</p></div>`;return}
   grid.innerHTML=list.map(tile).join("")+`<div class="end" role="note">${ql?`已显示全部 ${list.length} 个结果`:`到底了 · 共 ${list.length} 个配色`}</div>`;
   grid.querySelectorAll(".note").forEach(grow);
+  fitPreviews();
 }
 
 function doImport(text){
@@ -723,7 +773,12 @@ $("#importFile").onchange=async e=>{
 
 
 $("#scroller").addEventListener("scroll",e=>$("#top").classList.toggle("scrolled",e.target.scrollTop>4),{passive:true});
-syncSeg(); items=loadLocal(); render();
+$("#colBtn").onclick=()=>{cols=cols%3+1;try{localStorage.setItem(COLS_KEY,cols)}catch(_){}syncCols();render();toast(["","单栏","两栏","三栏"][cols],900)};
+let rzT; window.addEventListener("resize",()=>{clearTimeout(rzT);rzT=setTimeout(fitPreviews,120)});
+// keep it feeling like an app: no pinch zoom
+["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+document.addEventListener("touchmove",e=>{if(e.touches.length>1||(e.scale&&e.scale!==1)) e.preventDefault()},{passive:false});
+syncCols(); syncSeg(); items=loadLocal(); render();
 
 if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
 if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));

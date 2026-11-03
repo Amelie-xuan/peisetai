@@ -1,5 +1,5 @@
 // 配色台离线缓存。更新页面后把 VERSION 改个数字，手机上下次打开就会拿到新版。
-const VERSION = "v3";
+const VERSION = "v4";
 const CACHE = "peisetai-" + VERSION;
 const FILES = ["./", "./index.html", "./manifest.webmanifest",
   "./apple-touch-icon.png", "./icon-192.png", "./icon-512.png"];
