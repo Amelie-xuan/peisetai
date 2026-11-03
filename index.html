@@ -68,6 +68,19 @@ svg{display:block}
 .seg button{border:0;background:transparent;color:var(--ink-2);height:32px;padding:0 11px;border-radius:9px;font-size:14px}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:600}
 
+/* ---- dock ---- */
+.dock{flex:none;background:var(--bg);box-shadow:0 -1px 0 var(--line);-webkit-user-select:none;user-select:none}
+.dock-in{max-width:560px;margin:0 auto;display:flex;align-items:center;padding:6px 6px 4px}
+.dk{flex:1;min-width:0;border:0;background:transparent;color:var(--ink-2);display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;border-radius:12px}
+.dki{width:26px;height:26px;display:grid;place-items:center}
+.dki svg{width:23px;height:23px}
+.dkl{font-size:11px;line-height:1.2;font-weight:500}
+.dk:active{background:var(--surface)}
+.dk.main{color:var(--ink)}
+.dk.main .dki{width:46px;height:34px;border-radius:17px;background:var(--accent);color:var(--accent-ink)}
+.dk.main .dki svg{width:20px;height:20px}
+.dk.main .dkl{font-weight:600}
+
 /* ---- groups ---- */
 .groups{display:flex;gap:6px;overflow-x:auto;margin:10px -16px 0;padding:0 16px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .groups::-webkit-scrollbar{display:none}
@@ -206,6 +219,20 @@ details.more[open] summary svg{transform:rotate(90deg)}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(8px);z-index:60;max-width:calc(100% - 32px);
   background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;font-size:14px;line-height:1.4;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%)}
+.toast.act{pointer-events:auto;display:flex;align-items:center;gap:14px;padding:8px 8px 8px 16px;white-space:nowrap}
+.toast button{border:0;background:var(--bg);color:var(--ink);font-weight:600;font-size:14px;height:32px;padding:0 14px;border-radius:10px}
+.dock ~ .toast,.toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+/* trash */
+.tlist{background:var(--surface-2);border-radius:16px;overflow:hidden}
+.trow{display:flex;align-items:center;gap:12px;padding:10px 12px;min-height:60px}
+.trow+.trow{border-top:1px solid var(--line)}
+.tsw{display:flex;flex:none;border-radius:8px;overflow:hidden;width:36px;height:36px;box-shadow:inset 0 0 0 1px rgba(127,127,127,.25)}
+.tsw i{flex:1}
+.tinfo{flex:1;min-width:0}
+.tinfo b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tinfo small{color:var(--ink-3);font-size:12.5px}
+.trow .fbtn{height:36px;border-radius:11px;padding:0 14px;font-size:14px;background:var(--surface)}
+.tempty{color:var(--ink-2);text-align:center;padding:36px 10px}
 @media (prefers-reduced-motion:reduce){.sheet,.scrim,.toast,details.more summary svg{transition:none}}
 
 /* ---- phone mock (iOS 26 style home) ---- */
@@ -304,19 +331,22 @@ details.more[open] summary svg{transform:rotate(90deg)}
     <div class="titlebar">
       <h1>配色台</h1>
       <span class="count" id="count"></span>
-      <button class="ibtn" id="colBtn" aria-label="切换栏数"></button>
-      <button class="ibtn" id="menuBtn" aria-label="更多操作"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
-      <button class="pbtn" id="importOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg>导入</button>
     </div>
     <div class="filterbar">
       <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input id="q" type="search" placeholder="搜索名称或备注" aria-label="搜索名称或备注"></label>
-      <div class="seg" role="group" aria-label="预览样式"><button data-view="std">标准</button><button data-view="cmp">精简</button><button data-view="full">完整</button></div>
     </div>
     <div class="groups" id="groups" role="group" aria-label="分组"></div>
   </div>
 </header>
 
 <main class="scroller" id="scroller"><div class="wrap"><div class="grid" id="grid"></div></div></main>
+<nav class="dock" aria-label="工具栏"><div class="dock-in">
+  <button class="dk" id="colBtn"><span class="dki" id="colIco"></span><span class="dkl" id="colLbl">两栏</span></button>
+  <button class="dk" id="viewBtn"><span class="dki" id="viewIco"></span><span class="dkl" id="viewLbl">标准</span></button>
+  <button class="dk main" id="importOpen"><span class="dki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg></span><span class="dkl">导入</span></button>
+  <button class="dk" id="groupBtn"><span class="dki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19V6a1 1 0 0 1 1-1h5l2 2h8a1 1 0 0 1 1 1v2M3 19l2.6-8.2a1 1 0 0 1 1-.8H21l-2.7 8.4a1 1 0 0 1-1 .6z"/></svg></span><span class="dkl">分组</span></button>
+  <button class="dk" id="menuBtn"><span class="dki"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span><span class="dkl">更多</span></button>
+</div></nav>
 </div>
 
 <div class="scrim" id="scrim"></div>
@@ -340,6 +370,7 @@ details.more[open] summary svg{transform:rotate(90deg)}
   <div class="sh-head"><h2 id="sh-menu-t">更多</h2><button class="ibtn" data-close aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="sh-body">
     <div class="menu">
+      <button id="trashBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg><span style="flex:1">最近删除</span><small id="trashCount" style="color:var(--ink-3);font-size:14px"></small></button>
       <button id="copyAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>复制全部链接</button>
       <button id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>导出备份</button>
       <button id="importFileBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7 9l5-5 5 5M5 20h14"/></svg>导入备份</button>
@@ -374,6 +405,12 @@ details.more[open] summary svg{transform:rotate(90deg)}
   </div>
 </section>
 
+<section class="sheet" id="sh-trash" role="dialog" aria-modal="true" aria-labelledby="sh-trash-t">
+  <div class="sh-head"><h2 id="sh-trash-t">最近删除</h2><button class="ibtn" data-close aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="sh-body"><p class="help" style="margin:0 2px 12px">删除的配色会在这里保留 30 天，之后自动清除。</p><div class="tlist" id="trashList"></div></div>
+  <div class="sh-foot"><div class="btnrow"><button class="fbtn danger-btn grow" id="trashEmpty">全部彻底删除</button><button class="fbtn primary grow" id="trashRestoreAll">全部恢复</button></div></div>
+</section>
+
 <section class="sheet wide" id="sh-edit" role="dialog" aria-modal="true" aria-labelledby="sh-edit-t">
   <div class="sh-head"><h2 id="sh-edit-t">改颜色</h2><button class="ibtn" data-close aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="sh-body"><div class="ed"><div class="ed-pv" id="edPv"></div><div class="ed-list" id="edList"></div></div></div>
@@ -387,7 +424,7 @@ details.more[open] summary svg{transform:rotate(90deg)}
   </div>
 </section>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toastT"></span><button id="toastA" hidden></button></div>
 
 <script>
 const SV=(d,w)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w||1.7}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
@@ -585,11 +622,20 @@ async function remove(id){saveLocal()}
 
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s);
-function toast(t,ms){const el=$("#toast");el.textContent=t;el.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("show"),ms||1700)}
+function toast(t,ms,action){
+  const el=$("#toast"), a=$("#toastA");
+  $("#toastT").textContent=t;
+  if(action){a.hidden=false;a.textContent=action.label;a.onclick=()=>{el.classList.remove("show","act");clearTimeout(toast._t);action.fn()};el.classList.add("act")}
+  else{a.hidden=true;a.onclick=null;el.classList.remove("act")}
+  el.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("show","act"),ms||1700);
+}
 async function writeClip(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();return ok}}
 async function copy(t,msg){toast((await writeClip(t))?(msg||"已复制"):"复制失败，请长按手动复制")}
 const uidGen=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const byId=id=>items.find(i=>i.id===id);
+const live=()=>items.filter(i=>!i.deletedAt);
+const trashed=()=>items.filter(i=>i.deletedAt).sort((a,b)=>b.deletedAt-a.deletedAt);
+const TRASH_DAYS=30;
 function grow(el){el.style.height="auto";el.style.height=el.scrollHeight+"px"}
 
 /* ---------- sheets ---------- */
@@ -621,7 +667,7 @@ function colIcon(n){
 }
 function syncCols(){
   const g=$("#grid"); g.dataset.cols=cols; g.classList.toggle("compact",cols>1);
-  const b=$("#colBtn"); b.innerHTML=colIcon(cols); b.setAttribute("aria-label",`当前${["","单","两","三"][cols]}栏，点按切换`);
+  $("#colIco").innerHTML=colIcon(cols); $("#colLbl").textContent=["","单栏","两栏","三栏"][cols]; $("#colBtn").setAttribute("aria-label",`当前${["","单","两","三"][cols]}栏，点按切换`);
 }
 function fitPreviews(){
   const mobile=window.innerWidth<760;
@@ -662,11 +708,11 @@ function tile(it){
 function render(){
   const ql=q.trim().toLowerCase();
   renderGroups();
-  const inGroup=items.filter(i=>curGroup==="all"||(i.group||"")===curGroup);
+  const L=live(); const inGroup=L.filter(i=>curGroup==="all"||(i.group||"")===curGroup);
   const list=inGroup.filter(i=>!ql||(i.name+" "+(i.note||"")).toLowerCase().includes(ql));
-  $("#count").textContent=items.length?((ql||curGroup!=="all")?`${list.length} / ${items.length}`:`${items.length} 个`):"";
+  $("#count").textContent=L.length?((ql||curGroup!=="all")?`${list.length} / ${L.length}`:`${L.length} 个`):"";
   const grid=$("#grid");
-  if(!items.length){
+  if(!L.length){
     grid.innerHTML=`<div class="empty"><h2>还没有配色</h2><p>把小火箭的配色链接粘贴进来，每条都会生成一张预览，可以改名、写备注、改颜色。</p>
       <div class="row"><button class="gbtn" data-act="sample">先看看示例</button><button class="pbtn" data-act="open-import">${ICON.plus}导入配色</button></div></div>`;
     return;
@@ -682,10 +728,12 @@ function render(){
 function doImport(text){
   const parsed=parseInput(text); const hint=$("#hint");
   if(!parsed.length){hint.className="help";hint.textContent="没有找到 shadowrocket://color? 开头的链接，检查一下粘贴的内容。";return 0}
-  const have=new Set(items.map(i=>i.url)); let added=0,dup=0,bad=0; const now=Date.now(); let n=items.length;
+  const have=new Set(live().map(i=>i.url)); let added=0,dup=0,bad=0; const now=Date.now(); let n=items.length;
   parsed.forEach((p,idx)=>{
     if(have.has(p.url)){dup++;return}
     if(!Object.keys(parseColors(p.url)).length){bad++;return}
+    const old=items.find(i=>i.deletedAt&&i.url===p.url);
+    if(old){delete old.deletedAt; old.createdAt=now+parsed.length-idx; have.add(p.url); added++; persist(old); return}
     have.add(p.url); n++; added++;
     const it={id:uidGen(),name:p.name||("配色 "+n),note:"",url:p.url,createdAt:now+parsed.length-idx,group:(curGroup!=="all"?curGroup:"")};
     items.push(it); persist(it);
@@ -718,8 +766,7 @@ $("#grid").addEventListener("click",e=>{
   if(act==="edit") openEditor(it.id);
   if(act==="move") openMove(it.id);
   if(act==="del"){
-    if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="删除？";setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.innerHTML=ICON.trash}},2600);return}
-    items=items.filter(i=>i.id!==it.id); delete editing[it.id]; remove(it.id); render(); toast("已删除");
+    softDelete(it);
   }
 });
 
@@ -772,7 +819,7 @@ $("#edSaveAs").onclick=()=>{
   const it=byId(editor.id); if(!it) return;
   const url=buildUrl(it.url,editing[it.id]);
   if(url===it.url){toast("颜色还没有改动");return}
-  if(items.some(i=>i.url===url)){toast("已经有一模一样的配色了");return}
+  if(live().some(i=>i.url===url)){toast("已经有一模一样的配色了");return}
   const nm=$("#edName").value.trim()||(it.name+"（改）");
   const n={id:uidGen(),name:nm,note:"",url,createdAt:Date.now(),mine:true,group:it.group||""};
   delete editing[it.id]; items.unshift(n); persist(n);
@@ -782,14 +829,14 @@ $("#edOverwrite").onclick=()=>{
   const it=byId(editor.id); if(!it) return;
   const url=buildUrl(it.url,editing[it.id]);
   if(url===it.url){toast("颜色还没有改动");return}
-  if(items.some(i=>i.url===url&&i.id!==it.id)){toast("已经有一模一样的配色了");return}
+  if(live().some(i=>i.url===url&&i.id!==it.id)){toast("已经有一模一样的配色了");return}
   it.url=url; delete editing[it.id]; persist(it); closeSheet(); toast("已覆盖保存");
 };
 
 /* ---------- top bar ---------- */
 function openImport(){$("#hint").className="help";$("#hint").textContent="重复的链接会自动跳过。"+(curGroup!=="all"&&curGroup!==""?`导入的配色会放进“${curGroup}”分组。`:"");openSheet("sh-import")}
 $("#importOpen").onclick=openImport;
-$("#menuBtn").onclick=()=>openSheet("sh-menu");
+$("#menuBtn").onclick=()=>{$("#trashCount").textContent=trashed().length||"";openSheet("sh-menu")};
 $("#importBtn").onclick=()=>doImport($("#input").value);
 $("#sample").onclick=()=>doImport(SAMPLES.map(s=>s[0]+" "+s[1]).join("\n"));
 $("#paste").onclick=async()=>{
@@ -797,15 +844,21 @@ $("#paste").onclick=async()=>{
   catch(e){toast("读不到剪贴板，请长按输入框手动粘贴",2600)}
 };
 $("#q").addEventListener("input",e=>{q=e.target.value;render()});
-$("#copyAll").onclick=()=>{if(!items.length){toast("还没有配色可以复制");return} copy(items.map(i=>i.name+" "+i.url).join("\n"),`已复制 ${items.length} 条链接（带名字）`)};
-function syncSeg(){document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===view)))}
-document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(!b)return;view=b.dataset.view;try{localStorage.setItem(VIEW_KEY,view)}catch(_){}syncSeg();render()});
+$("#copyAll").onclick=()=>{const L=live(); if(!L.length){toast("还没有配色可以复制");return} copy(L.map(i=>i.name+" "+i.url).join("\n"),`已复制 ${L.length} 条链接（带名字）`)};
+const VIEWS=["std","cmp","full"], VIEW_NAMES={std:"标准",cmp:"精简",full:"完整"};
+function viewIcon(v){
+  if(v==="full") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="6.5" y="2.5" width="11" height="19" rx="3"/><path d="M10.5 5h3"/></svg>';
+  if(v==="cmp") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="6" width="16" height="12" rx="3"/><path d="M7.5 10h6M7.5 13.5h4"/></svg>';
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="3.5" width="14" height="17" rx="3"/><path d="M8.5 8h7M8.5 11.5h7M8.5 15h4"/></svg>';
+}
+function syncSeg(){$("#viewIco").innerHTML=viewIcon(view);$("#viewLbl").textContent=VIEW_NAMES[view]||"标准";$("#viewBtn").setAttribute("aria-label",`预览样式：${VIEW_NAMES[view]}，点按切换`)}
+$("#viewBtn").onclick=()=>{view=VIEWS[(VIEWS.indexOf(view)+1)%3];try{localStorage.setItem(VIEW_KEY,view)}catch(_){}syncSeg();render();toast(VIEW_NAMES[view]+"预览",900)};
 
 $("#exportBtn").onclick=async()=>{
-  if(!items.length){toast("还没有配色可以备份");return}
+  if(!live().length){toast("还没有配色可以备份");return}
   const d=new Date(), stamp=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
   const name=`配色台备份-${stamp}.json`;
-  const blob=new Blob([JSON.stringify({app:"peisetai",version:1,exportedAt:d.toISOString(),items},null,1)],{type:"application/json"});
+  const blob=new Blob([JSON.stringify({app:"peisetai",version:1,exportedAt:d.toISOString(),items:live()},null,1)],{type:"application/json"});
   const file=new File([blob],name,{type:"application/json"});
   try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return}}
   catch(e){if(e&&e.name==="AbortError")return}
@@ -817,7 +870,7 @@ $("#importFile").onchange=async e=>{
   const f=e.target.files[0]; e.target.value=""; if(!f) return;
   try{
     const data=JSON.parse(await f.text()); const list=Array.isArray(data)?data:data.items; if(!Array.isArray(list)) throw 0;
-    const have=new Set(items.map(i=>i.url)); let added=0;
+    const have=new Set(live().map(i=>i.url)); let added=0;
     for(const it of list){
       if(!it||typeof it.url!=="string"||!/^shadowrocket:\/\/color\?/i.test(it.url)||have.has(it.url)) continue;
       items.push({id:uidGen(),name:String(it.name||"未命名配色").slice(0,40),note:String(it.note||""),url:it.url,createdAt:Number(it.createdAt)||Date.now(),mine:!!it.mine,group:String(it.group||"").slice(0,16)});
@@ -835,6 +888,37 @@ let rzT; window.addEventListener("resize",()=>{clearTimeout(rzT);rzT=setTimeout(
 // keep it feeling like an app: no pinch zoom
 ["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 document.addEventListener("touchmove",e=>{if(e.touches.length>1||(e.scale&&e.scale!==1)) e.preventDefault()},{passive:false});
+/* ---------- delete & restore ---------- */
+function softDelete(it){
+  it.deletedAt=Date.now(); delete editing[it.id]; persist(it); render();
+  toast(`已删除“${it.name}”`,5000,{label:"撤销",fn:()=>{delete it.deletedAt; persist(it); render(); toast("已恢复")}});
+}
+function daysLeft(it){return Math.max(1,Math.ceil((it.deletedAt+TRASH_DAYS*864e5-Date.now())/864e5))}
+function renderTrash(){
+  const T=trashed(); $("#trashCount").textContent=T.length||"";
+  $("#trashEmpty").disabled=$("#trashRestoreAll").disabled=!T.length;
+  $("#trashEmpty").classList.remove("armed"); $("#trashEmpty").textContent="全部彻底删除";
+  if(!T.length){$("#trashList").innerHTML='<div class="tempty">没有最近删除的配色</div>';return}
+  $("#trashList").innerHTML=T.map(it=>{
+    const c=parseColors(it.url), sw=["NavigationBarColor","TableCellBackgroundColor","ButtonIconColor"].map(k=>`<i style="background:${css(c[k]||DEF[k])}"></i>`).join("");
+    return `<div class="trow" data-tid="${it.id}"><span class="tsw">${sw}</span><span class="tinfo"><b>${esc(it.name)}</b><small>${daysLeft(it)} 天后彻底删除</small></span><button class="fbtn" data-tact="restore">恢复</button></div>`;
+  }).join("");
+}
+function hardDelete(it){items=items.filter(i=>i.id!==it.id); remove(it.id)}
+$("#trashBtn").onclick=()=>{renderTrash(); openSheet("sh-trash")};
+$("#trashList").addEventListener("click",e=>{
+  const b=e.target.closest("[data-tact]"); if(!b) return;
+  const it=byId(b.closest(".trow").dataset.tid); if(!it) return;
+  delete it.deletedAt; persist(it); render(); renderTrash(); toast(`已恢复“${it.name}”`);
+});
+$("#trashRestoreAll").onclick=()=>{const T=trashed(); T.forEach(it=>{delete it.deletedAt; persist(it)}); render(); closeSheet(); toast(`已恢复 ${T.length} 个配色`)};
+$("#trashEmpty").onclick=()=>{
+  const b=$("#trashEmpty");
+  if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="确认？无法恢复";return}
+  const T=trashed(); T.forEach(hardDelete); saveLocal(); render(); renderTrash(); toast(`已彻底删除 ${T.length} 个配色`);
+};
+function purgeTrash(){const cut=Date.now()-TRASH_DAYS*864e5; items.filter(i=>i.deletedAt&&i.deletedAt<cut).forEach(hardDelete); saveLocal()}
+
 /* ---------- groups ---------- */
 const GROUPS_KEY="sr-color-board-groups", CURG_KEY="sr-color-board-curgroup";
 let extraGroups=(()=>{try{return JSON.parse(localStorage.getItem(GROUPS_KEY)||"[]")}catch(e){return[]}})();
@@ -842,16 +926,16 @@ let curGroup=(()=>{try{const v=localStorage.getItem(CURG_KEY);return v===null?"a
 function saveGroups(){try{localStorage.setItem(GROUPS_KEY,JSON.stringify(extraGroups));localStorage.setItem(CURG_KEY,curGroup)}catch(e){}}
 function allGroups(){
   const set=[...extraGroups];
-  items.forEach(i=>{if(i.group&&!set.includes(i.group)) set.push(i.group)});
+  live().forEach(i=>{if(i.group&&!set.includes(i.group)) set.push(i.group)});
   return set;
 }
 function renderGroups(){
   const gs=allGroups();
   if(curGroup!=="all"&&curGroup!==""&&!gs.includes(curGroup)) curGroup="all";
-  const cnt=g=>items.filter(i=>(i.group||"")===g).length;
+  const cnt=g=>live().filter(i=>(i.group||"")===g).length;
   const ungrouped=cnt("");
   const chip=(val,label,n)=>`<button class="gchip" data-g="${esc(val)}" aria-pressed="${curGroup===val}">${label}${n!==undefined?`<small>${n}</small>`:""}</button>`;
-  let h=chip("all","全部",items.length);
+  let h=chip("all","全部",live().length);
   h+=gs.map(g=>chip(g,esc(g),cnt(g))).join("");
   if(gs.length&&ungrouped) h+=chip("","未分组",ungrouped);
   h+=`<button class="gchip icon" data-gact="new" aria-label="新建分组">${ICON.plus}${gs.length?"":"新建分组"}</button>`;
@@ -892,6 +976,7 @@ $("#groupSave").onclick=()=>{
   }
   saveGroups(); closeSheet(); render();
 };
+$("#groupBtn").onclick=()=>{if(curGroup!=="all"&&curGroup!=="") openGroupSheet(curGroup); else openGroupSheet(null)};
 $("#groupName").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#groupSave").click()}});
 $("#groupDel").onclick=()=>{
   const b=$("#groupDel");
@@ -924,7 +1009,7 @@ $("#moveNewBtn").onclick=()=>{
 };
 $("#moveNew").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#moveNewBtn").click()}});
 
-syncCols(); syncSeg(); items=loadLocal(); render();
+syncCols(); syncSeg(); items=loadLocal(); purgeTrash(); render();
 
 if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
 if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
