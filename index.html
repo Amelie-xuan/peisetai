@@ -17,7 +17,7 @@
 <style>
 :root{
   --bg:#EDEEF2; --bg-a:rgba(237,238,242,.86); --surface:#FFFFFF; --surface-2:#F4F5F8; --ink:#16181D; --ink-2:#5B6170; --ink-3:#979CA8;
-  --line:#E3E5EA; --accent:#4A4FE0; --accent-ink:#FFFFFF; --accent-soft:rgba(74,79,224,.12); --danger:#D2453B; --scrim:rgba(20,22,28,.38);
+  --line:#E3E5EA; --accent:#16181D; --accent-ink:#FFFFFF; --accent-soft:rgba(22,24,29,.07); --danger:#D2453B; --scrim:rgba(20,22,28,.38);
   color-scheme:light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -26,13 +26,13 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --bg:#0F1013; --bg-a:rgba(15,16,19,.86); --surface:#1A1C21; --surface-2:#23262C; --ink:#ECEDEF; --ink-2:#A3A8B3; --ink-3:#6E7380;
-    --line:#2C2F36; --accent:#8D90FF; --accent-ink:#0F1013; --accent-soft:rgba(141,144,255,.16); --danger:#F0776B; --scrim:rgba(0,0,0,.55);
+    --line:#2C2F36; --accent:#ECEDEF; --accent-ink:#0F1013; --accent-soft:rgba(236,237,239,.12); --danger:#F0776B; --scrim:rgba(0,0,0,.55);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0F1013; --bg-a:rgba(15,16,19,.86); --surface:#1A1C21; --surface-2:#23262C; --ink:#ECEDEF; --ink-2:#A3A8B3; --ink-3:#6E7380;
-  --line:#2C2F36; --accent:#8D90FF; --accent-ink:#0F1013; --accent-soft:rgba(141,144,255,.16); --danger:#F0776B; --scrim:rgba(0,0,0,.55);
+  --line:#2C2F36; --accent:#ECEDEF; --accent-ink:#0F1013; --accent-soft:rgba(236,237,239,.12); --danger:#F0776B; --scrim:rgba(0,0,0,.55);
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -68,6 +68,30 @@ svg{display:block}
 .seg button{border:0;background:transparent;color:var(--ink-2);height:32px;padding:0 11px;border-radius:9px;font-size:14px}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:600}
 
+/* ---- groups ---- */
+.groups{display:flex;gap:6px;overflow-x:auto;margin:10px -16px 0;padding:0 16px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.groups::-webkit-scrollbar{display:none}
+.gchip{flex:none;height:32px;padding:0 13px;border-radius:16px;border:0;background:var(--surface);color:var(--ink-2);font-size:14px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.gchip small{font-size:12px;opacity:.6;font-variant-numeric:tabular-nums}
+.gchip[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:600}
+.gchip.icon{padding:0 10px}
+.gchip svg{width:16px;height:16px}
+.chip.grp{max-width:7em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grid[data-cols="3"] .chip.grp{display:none}
+.glist{background:var(--surface-2);border-radius:16px;overflow:hidden}
+.glist button{width:100%;border:0;background:transparent;display:flex;align-items:center;gap:10px;padding:0 16px;height:50px;font-size:16px;text-align:left}
+.glist button+button{border-top:1px solid var(--line)}
+.glist button span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.glist button small{color:var(--ink-3);font-size:13px}
+.glist button svg{width:18px;height:18px;flex:none}
+.glist button.cur{font-weight:600}
+.newg{display:flex;gap:8px;margin-top:12px}
+.newg .field{flex:1}
+.sec-t{font-size:13px;font-weight:600;color:var(--ink-2);margin:4px 4px 8px}
+.danger-btn{color:var(--danger)}
+.danger-btn.armed{background:var(--danger);color:#fff}
+@media (min-width:760px){.groups{margin:12px -24px 0;padding:0 24px 2px}}
+
 /* ---- gallery ---- */
 .wrap{max-width:1240px;margin:0 auto;padding:6px 16px calc(40px + env(safe-area-inset-bottom,0px))}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(296px,1fr));gap:14px;align-items:start}
@@ -101,8 +125,8 @@ svg{display:block}
 .empty .pbtn{height:44px;border-radius:14px;padding:0 18px}
 
 /* ---- sheets ---- */
-.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40;opacity:0;pointer-events:none;transition:opacity .22s}
-.scrim.on{opacity:1;pointer-events:auto}
+.scrim{position:fixed;inset:0;background:transparent;z-index:40;visibility:hidden;pointer-events:none;transition:background-color .22s,visibility 0s linear .22s}
+.scrim.on{background:var(--scrim);visibility:visible;pointer-events:auto;transition:background-color .22s}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;margin:0 auto;width:100%;max-width:640px;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 12px);
   background:var(--surface);border-radius:24px 24px 0 0;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);visibility:hidden}
 .sheet.on{transform:none;visibility:visible}
@@ -261,7 +285,7 @@ details.more[open] summary svg{transform:rotate(90deg)}
 .compact .chip{font-size:10.5px;line-height:17px;padding:0 6px}
 .compact .chip.tone{display:none}
 .compact .note{font-size:12.5px;line-height:1.4;min-height:23px;padding:2px 6px}
-.compact .acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding-top:8px}
+.compact .acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding-top:8px}
 .compact .apply{grid-column:1/-1;height:36px;border-radius:11px;font-size:14px}
 .compact .apply .long{display:none}
 .compact .apply svg{width:16px;height:16px}
@@ -288,6 +312,7 @@ details.more[open] summary svg{transform:rotate(90deg)}
       <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input id="q" type="search" placeholder="搜索名称或备注" aria-label="搜索名称或备注"></label>
       <div class="seg" role="group" aria-label="预览样式"><button data-view="std">标准</button><button data-view="cmp">精简</button><button data-view="full">完整</button></div>
     </div>
+    <div class="groups" id="groups" role="group" aria-label="分组"></div>
   </div>
 </header>
 
@@ -323,6 +348,29 @@ details.more[open] summary svg{transform:rotate(90deg)}
     <p class="menu-note" id="storeNote">配色保存在这台手机上。删掉主屏幕图标会连同数据一起删除，记得定期导出备份。</p>
     <input type="file" id="importFile" accept=".json,application/json" hidden>
 
+  </div>
+</section>
+
+<section class="sheet" id="sh-move" role="dialog" aria-modal="true" aria-labelledby="sh-move-t">
+  <div class="sh-head"><h2 id="sh-move-t">移到分组</h2><button class="ibtn" data-close aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="sh-body">
+    <div class="glist" id="moveList"></div>
+    <div class="newg"><input class="field" id="moveNew" placeholder="新建分组" maxlength="16" aria-label="新建分组名字"><button class="fbtn primary" id="moveNewBtn">新建并移入</button></div>
+  </div>
+</section>
+
+<section class="sheet" id="sh-group" role="dialog" aria-modal="true" aria-labelledby="sh-group-t">
+  <div class="sh-head"><h2 id="sh-group-t">分组</h2><button class="ibtn" data-close aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="sh-body">
+    <p class="sec-t" id="groupSecT">分组名字</p>
+    <input class="field" id="groupName" maxlength="16" placeholder="例如：深色、通勤、收藏" aria-label="分组名字">
+    <p class="help" id="groupHelp"></p>
+  </div>
+  <div class="sh-foot">
+    <div class="btnrow">
+      <button class="fbtn danger-btn" id="groupDel">删除分组</button>
+      <button class="fbtn primary grow" id="groupSave">保存</button>
+    </div>
   </div>
 </section>
 
@@ -371,6 +419,7 @@ ICON.download=SV('<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>');
 ICON.upload=SV('<path d="M12 15V4M7 9l5-5 5 5M5 20h14"/>');
 ICON.open=SV('<path d="M14 5h5v5M19 5l-8 8M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/>');
 ICON.chev=SV('<path d="M9 5l7 7-7 7"/>',2.2);
+ICON.check=SV('<path d="M5 12.5l4.5 4.5L19 7.5"/>',2.2);
 
 const SAMPLES=[["示例 · 浅色","shadowrocket://color?NavigationBarColor=%23FCFFFFFF&NavigationBar2Color=%23FFFFFF&NavigationBarTextColor=%23262626&NavigationBar2TextColor=%23262626&TabBarColor=%23FFFFFF&TabBarBorderColor=%23FFFFFF&TabBarSelectedColor=%23262626&TabBarUnselectedColor=%239F9FA1&TableBackgroundColor=%23FFFFFF&TableCellBackgroundColor=%23F2F2F2&TableCellSelectedBackgroundColor=%23FFFFFF&TableSeparatorColor=%23FFFFFF&TextFieldTextColor=%23535353&PlaceholderColor=%239F9FA1&TextLabelTextColor=%23262626&DetailLabelTextColor=%23535353&TextLabelDeleteColor=%23E8886D&HeaderFooterTextColor=%239F9FA1&SearchFieldBackgroundColor=%23F2F2F2&IndicatorColor=%23CCCCCC&ButtonIconColor=%23535353&ButtonNormalColor=%23535353&ButtonNormal2Color=%23535353&ButtonNormal3Color=%23535353&ButtonHighlightedColor=%23CCCCCC&ButtonHighlighted2Color=%23CCCCCC&ButtonHighlighted3Color=%23202024&ButtonDisabledColor=%23202024&ButtonDisabled2Color=%2380FFFFFF&PingSuccessTextColor=%2326BBFF&PingTimeoutTextColor=%23E8886D&DefaultDotColor=%2326BBFF&HUDBackgroundColor=%23F2F2F2&v=1.0"],["示例 · 深色","shadowrocket://color?NavigationBarColor=%23FC202024&NavigationBar2Color=%23202024&NavigationBarTextColor=%23CCCCCC&NavigationBar2TextColor=%23CCCCCC&TabBarColor=%23202024&TabBarBorderColor=%23202024&TabBarSelectedColor=%23CCCCCC&TabBarUnselectedColor=%23646464&TableBackgroundColor=%23202024&TableCellBackgroundColor=%23343338&TableCellSelectedBackgroundColor=%23202024&TableSeparatorColor=%23202024&TextFieldTextColor=%23CCCCCC&PlaceholderColor=%23646464&TextLabelTextColor=%23CCCCCC&DetailLabelTextColor=%23646464&TextLabelDeleteColor=%23E8886D&HeaderFooterTextColor=%23646464&SearchFieldBackgroundColor=%23343338&IndicatorColor=%23CCCCCC&ButtonIconColor=%239F9FA1&ButtonNormalColor=%239F9FA1&ButtonNormal2Color=%239F9FA1&ButtonNormal3Color=%23646464&ButtonHighlightedColor=%23CCCCCC&ButtonHighlighted2Color=%23CCCCCC&ButtonHighlighted3Color=%23202024&ButtonDisabledColor=%23202024&ButtonDisabled2Color=%2380FFFFFF&PingSuccessTextColor=%2326BBFF&PingTimeoutTextColor=%23E8886D&DefaultDotColor=%2326BBFF&HUDBackgroundColor=%23343338&v=1.0"]];
 const LABELS={
@@ -596,6 +645,7 @@ function tile(it){
         <input class="name" value="${esc(it.name)}" aria-label="名字" maxlength="40">
         ${editing[it.id]?'<span class="chip draft">改色未保存</span>':""}
         ${it.mine?'<span class="chip mine">我的</span>':""}
+        ${it.group&&curGroup==="all"?`<span class="chip grp">${esc(it.group)}</span>`:""}
         <span class="chip tone">${tone}</span>
       </div>
       <textarea class="note" rows="1" placeholder="添加备注" aria-label="备注">${esc(it.note||"")}</textarea>
@@ -603,6 +653,7 @@ function tile(it){
     <div class="acts">
       <a class="apply" data-act="apply" href="${esc(it.url)}">${ICON.open}应用<span class="long">到小火箭</span></a>
       <button class="sq" data-act="edit" aria-label="改颜色" title="改颜色">${ICON.brush}</button>
+      <button class="sq" data-act="move" aria-label="移到分组" title="移到分组">${ICON.folder}</button>
       <button class="sq" data-act="copy" aria-label="复制链接" title="复制链接">${ICON.copy}</button>
       <button class="sq" data-act="del" aria-label="删除" title="删除">${ICON.trash}</button>
     </div>
@@ -610,15 +661,19 @@ function tile(it){
 }
 function render(){
   const ql=q.trim().toLowerCase();
-  const list=items.filter(i=>!ql||(i.name+" "+(i.note||"")).toLowerCase().includes(ql));
-  $("#count").textContent=items.length?(ql?`${list.length} / ${items.length}`:`${items.length} 个`):"";
+  renderGroups();
+  const inGroup=items.filter(i=>curGroup==="all"||(i.group||"")===curGroup);
+  const list=inGroup.filter(i=>!ql||(i.name+" "+(i.note||"")).toLowerCase().includes(ql));
+  $("#count").textContent=items.length?((ql||curGroup!=="all")?`${list.length} / ${items.length}`:`${items.length} 个`):"";
   const grid=$("#grid");
   if(!items.length){
     grid.innerHTML=`<div class="empty"><h2>还没有配色</h2><p>把小火箭的配色链接粘贴进来，每条都会生成一张预览，可以改名、写备注、改颜色。</p>
       <div class="row"><button class="gbtn" data-act="sample">先看看示例</button><button class="pbtn" data-act="open-import">${ICON.plus}导入配色</button></div></div>`;
     return;
   }
-  if(!list.length){grid.innerHTML=`<div class="empty"><h2>没有找到</h2><p>没有名字或备注包含“${esc(q.trim())}”的配色。</p></div>`;return}
+  if(!list.length){
+    if(!ql&&curGroup!=="all"){grid.innerHTML=`<div class="empty"><h2>${curGroup?"“"+esc(curGroup)+"”还是空的":"没有未分组的配色"}</h2><p>${curGroup?"在配色卡片上点文件夹按钮，把配色移进来；也可以停在这个分组里导入，新配色会直接放进来。":"所有配色都已经分好组了。"}</p>${curGroup?`<div class="row"><button class="pbtn" data-act="open-import">${ICON.plus}导入到这个分组</button></div>`:""}</div>`;return}
+    grid.innerHTML=`<div class="empty"><h2>没有找到</h2><p>没有名字或备注包含“${esc(q.trim())}”的配色。</p></div>`;return}
   grid.innerHTML=list.map(tile).join("")+`<div class="end" role="note">${ql?`已显示全部 ${list.length} 个结果`:`到底了 · 共 ${list.length} 个配色`}</div>`;
   grid.querySelectorAll(".note").forEach(grow);
   fitPreviews();
@@ -632,7 +687,7 @@ function doImport(text){
     if(have.has(p.url)){dup++;return}
     if(!Object.keys(parseColors(p.url)).length){bad++;return}
     have.add(p.url); n++; added++;
-    const it={id:uidGen(),name:p.name||("配色 "+n),note:"",url:p.url,createdAt:now+parsed.length-idx};
+    const it={id:uidGen(),name:p.name||("配色 "+n),note:"",url:p.url,createdAt:now+parsed.length-idx,group:(curGroup!=="all"?curGroup:"")};
     items.push(it); persist(it);
   });
   items.sort((a,b)=>b.createdAt-a.createdAt);
@@ -655,12 +710,13 @@ $("#grid").addEventListener("input",e=>{
 $("#grid").addEventListener("click",e=>{
   const b=e.target.closest("[data-act]"); if(!b) return;
   if(b.dataset.act==="sample"){doImport(SAMPLES.map(s=>s[0]+" "+s[1]).join("\n"));return}
-  if(b.dataset.act==="open-import"){openSheet("sh-import");return}
+  if(b.dataset.act==="open-import"){openImport();return}
   const card=b.closest(".tile"); const it=card&&byId(card.dataset.id); if(!it) return;
   const act=b.dataset.act;
   if(act==="apply"){writeClip(it.url); toast("正在打开小火箭…没跳转的话，链接已复制，到小火箭“配置”页点 ➕ 粘贴",4200); return}
   if(act==="copy") copy(it.url,"链接已复制");
   if(act==="edit") openEditor(it.id);
+  if(act==="move") openMove(it.id);
   if(act==="del"){
     if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="删除？";setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.innerHTML=ICON.trash}},2600);return}
     items=items.filter(i=>i.id!==it.id); delete editing[it.id]; remove(it.id); render(); toast("已删除");
@@ -718,7 +774,7 @@ $("#edSaveAs").onclick=()=>{
   if(url===it.url){toast("颜色还没有改动");return}
   if(items.some(i=>i.url===url)){toast("已经有一模一样的配色了");return}
   const nm=$("#edName").value.trim()||(it.name+"（改）");
-  const n={id:uidGen(),name:nm,note:"",url,createdAt:Date.now(),mine:true};
+  const n={id:uidGen(),name:nm,note:"",url,createdAt:Date.now(),mine:true,group:it.group||""};
   delete editing[it.id]; items.unshift(n); persist(n);
   q=""; $("#q").value=""; closeSheet(); $("#scroller").scrollTo({top:0,behavior:"smooth"}); toast(`已另存为“${nm}”`);
 };
@@ -731,7 +787,8 @@ $("#edOverwrite").onclick=()=>{
 };
 
 /* ---------- top bar ---------- */
-$("#importOpen").onclick=()=>{$("#hint").className="help";$("#hint").textContent="重复的链接会自动跳过。";openSheet("sh-import")};
+function openImport(){$("#hint").className="help";$("#hint").textContent="重复的链接会自动跳过。"+(curGroup!=="all"&&curGroup!==""?`导入的配色会放进“${curGroup}”分组。`:"");openSheet("sh-import")}
+$("#importOpen").onclick=openImport;
 $("#menuBtn").onclick=()=>openSheet("sh-menu");
 $("#importBtn").onclick=()=>doImport($("#input").value);
 $("#sample").onclick=()=>doImport(SAMPLES.map(s=>s[0]+" "+s[1]).join("\n"));
@@ -763,7 +820,7 @@ $("#importFile").onchange=async e=>{
     const have=new Set(items.map(i=>i.url)); let added=0;
     for(const it of list){
       if(!it||typeof it.url!=="string"||!/^shadowrocket:\/\/color\?/i.test(it.url)||have.has(it.url)) continue;
-      items.push({id:uidGen(),name:String(it.name||"未命名配色").slice(0,40),note:String(it.note||""),url:it.url,createdAt:Number(it.createdAt)||Date.now(),mine:!!it.mine});
+      items.push({id:uidGen(),name:String(it.name||"未命名配色").slice(0,40),note:String(it.note||""),url:it.url,createdAt:Number(it.createdAt)||Date.now(),mine:!!it.mine,group:String(it.group||"").slice(0,16)});
       have.add(it.url); added++;
     }
     items.sort((a,b)=>b.createdAt-a.createdAt); saveLocal(); render(); closeSheet();
@@ -778,6 +835,95 @@ let rzT; window.addEventListener("resize",()=>{clearTimeout(rzT);rzT=setTimeout(
 // keep it feeling like an app: no pinch zoom
 ["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 document.addEventListener("touchmove",e=>{if(e.touches.length>1||(e.scale&&e.scale!==1)) e.preventDefault()},{passive:false});
+/* ---------- groups ---------- */
+const GROUPS_KEY="sr-color-board-groups", CURG_KEY="sr-color-board-curgroup";
+let extraGroups=(()=>{try{return JSON.parse(localStorage.getItem(GROUPS_KEY)||"[]")}catch(e){return[]}})();
+let curGroup=(()=>{try{const v=localStorage.getItem(CURG_KEY);return v===null?"all":v}catch(e){return "all"}})();
+function saveGroups(){try{localStorage.setItem(GROUPS_KEY,JSON.stringify(extraGroups));localStorage.setItem(CURG_KEY,curGroup)}catch(e){}}
+function allGroups(){
+  const set=[...extraGroups];
+  items.forEach(i=>{if(i.group&&!set.includes(i.group)) set.push(i.group)});
+  return set;
+}
+function renderGroups(){
+  const gs=allGroups();
+  if(curGroup!=="all"&&curGroup!==""&&!gs.includes(curGroup)) curGroup="all";
+  const cnt=g=>items.filter(i=>(i.group||"")===g).length;
+  const ungrouped=cnt("");
+  const chip=(val,label,n)=>`<button class="gchip" data-g="${esc(val)}" aria-pressed="${curGroup===val}">${label}${n!==undefined?`<small>${n}</small>`:""}</button>`;
+  let h=chip("all","全部",items.length);
+  h+=gs.map(g=>chip(g,esc(g),cnt(g))).join("");
+  if(gs.length&&ungrouped) h+=chip("","未分组",ungrouped);
+  h+=`<button class="gchip icon" data-gact="new" aria-label="新建分组">${ICON.plus}${gs.length?"":"新建分组"}</button>`;
+  if(curGroup!=="all"&&curGroup!=="") h+=`<button class="gchip icon" data-gact="manage" aria-label="管理分组">${ICON.more}</button>`;
+  $("#groups").innerHTML=h;
+}
+$("#groups").addEventListener("click",e=>{
+  const g=e.target.closest("[data-g]");
+  if(g){curGroup=g.dataset.g; saveGroups(); render(); $("#scroller").scrollTop=0; return}
+  const a=e.target.closest("[data-gact]"); if(!a) return;
+  if(a.dataset.gact==="new") openGroupSheet(null);
+  if(a.dataset.gact==="manage") openGroupSheet(curGroup);
+});
+let groupEditing=null;
+function openGroupSheet(name){
+  groupEditing=name;
+  $("#sh-group-t").textContent=name?"管理分组":"新建分组";
+  $("#groupName").value=name||"";
+  $("#groupDel").hidden=!name; $("#groupDel").classList.remove("armed"); $("#groupDel").textContent="删除分组";
+  $("#groupHelp").textContent=name?"删除分组不会删除里面的配色，它们会回到“未分组”。":"新建后会切换到这个分组，接着导入的配色会直接放进来。";
+  openSheet("sh-group");
+  setTimeout(()=>$("#groupName").focus({preventScroll:true}),80);
+}
+function cleanName(v){return v.replace(/\s+/g," ").trim().slice(0,16)}
+$("#groupSave").onclick=()=>{
+  const v=cleanName($("#groupName").value);
+  if(!v){toast("给分组起个名字");return}
+  if(v==="全部"||v==="未分组"){toast("这个名字不能用");return}
+  const gs=allGroups();
+  if(groupEditing===null){
+    if(!gs.includes(v)) extraGroups.push(v);
+    curGroup=v;
+  }else if(v!==groupEditing){
+    if(gs.includes(v)){toast("已经有同名分组");return}
+    extraGroups=extraGroups.map(g=>g===groupEditing?v:g); if(!extraGroups.includes(v)) extraGroups.push(v);
+    items.forEach(i=>{if(i.group===groupEditing){i.group=v;persist(i)}});
+    curGroup=v;
+  }
+  saveGroups(); closeSheet(); render();
+};
+$("#groupName").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#groupSave").click()}});
+$("#groupDel").onclick=()=>{
+  const b=$("#groupDel");
+  if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="确认删除";return}
+  const g=groupEditing; extraGroups=extraGroups.filter(x=>x!==g);
+  items.forEach(i=>{if(i.group===g){i.group="";persist(i)}});
+  curGroup="all"; saveGroups(); closeSheet(); render(); toast(`已删除分组“${g}”`);
+};
+let moveId=null;
+function openMove(id){
+  const it=byId(id); if(!it) return; moveId=id;
+  $("#sh-move-t").textContent="移到分组 · "+it.name;
+  const cur=it.group||"";
+  const row=(val,label)=>`<button data-mg="${esc(val)}" class="${cur===val?"cur":""}"><span>${label}</span>${cur===val?ICON.check:""}</button>`;
+  $("#moveList").innerHTML=row("","未分组")+allGroups().map(g=>row(g,esc(g))).join("");
+  $("#moveNew").value="";
+  openSheet("sh-move");
+}
+function moveTo(g){
+  const it=byId(moveId); if(!it) return;
+  it.group=g; persist(it); closeSheet(); render(); toast(g?`已移到“${g}”`:"已移出分组");
+}
+$("#moveList").addEventListener("click",e=>{const b=e.target.closest("[data-mg]"); if(b) moveTo(b.dataset.mg)});
+$("#moveNewBtn").onclick=()=>{
+  const v=cleanName($("#moveNew").value);
+  if(!v){toast("给新分组起个名字");return}
+  if(v==="全部"||v==="未分组"){toast("这个名字不能用");return}
+  if(!allGroups().includes(v)) extraGroups.push(v);
+  saveGroups(); moveTo(v);
+};
+$("#moveNew").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#moveNewBtn").click()}});
+
 syncCols(); syncSeg(); items=loadLocal(); render();
 
 if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
