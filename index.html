@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>配色台</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="配色台">
+<meta name="theme-color" content="#EDEEF2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1013" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+
+<style>
+:root{
+  --bg:#EDEEF2; --bg-a:rgba(237,238,242,.86); --surface:#FFFFFF; --surface-2:#F4F5F8; --ink:#16181D; --ink-2:#5B6170; --ink-3:#979CA8;
+  --line:#E3E5EA; --accent:#4A4FE0; --accent-ink:#FFFFFF; --accent-soft:rgba(74,79,224,.12); --danger:#D2453B; --scrim:rgba(20,22,28,.38);
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1013; --bg-a:rgba(15,16,19,.86); --surface:#1A1C21; --surface-2:#23262C; --ink:#ECEDEF; --ink-2:#A3A8B3; --ink-3:#6E7380;
+    --line:#2C2F36; --accent:#8D90FF; --accent-ink:#0F1013; --accent-soft:rgba(141,144,255,.16); --danger:#F0776B; --scrim:rgba(0,0,0,.55);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1013; --bg-a:rgba(15,16,19,.86); --surface:#1A1C21; --surface-2:#23262C; --ink:#ECEDEF; --ink-2:#A3A8B3; --ink-3:#6E7380;
+  --line:#2C2F36; --accent:#8D90FF; --accent-ink:#0F1013; --accent-soft:rgba(141,144,255,.16); --danger:#F0776B; --scrim:rgba(0,0,0,.55);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg-a);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+body.locked{overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-user-select:none;user-select:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+svg{display:block}
+
+/* ---- top bar ---- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg-a);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.top-in{max-width:1240px;margin:0 auto;padding:12px 16px 10px}
+.titlebar{display:flex;align-items:center;gap:10px}
+.titlebar h1{margin:0;font-size:24px;line-height:1.15;font-weight:700;letter-spacing:-.02em}
+.titlebar .count{color:var(--ink-3);font-size:14px;font-variant-numeric:tabular-nums;margin-right:auto;padding-top:3px}
+.ibtn{width:38px;height:38px;border-radius:12px;border:0;background:var(--surface);display:grid;place-items:center;color:var(--ink);flex:none}
+.ibtn svg{width:19px;height:19px}
+.pbtn{height:38px;border-radius:12px;border:0;background:var(--accent);color:var(--accent-ink);padding:0 14px 0 11px;display:inline-flex;align-items:center;gap:5px;font-weight:600;font-size:15px}
+.pbtn svg{width:18px;height:18px}
+.filterbar{display:flex;gap:8px;margin-top:10px}
+.search{flex:1;min-width:0;position:relative}
+.search svg{position:absolute;left:11px;top:50%;width:17px;height:17px;margin-top:-8.5px;color:var(--ink-3);pointer-events:none}
+.search input{width:100%;height:38px;border:0;border-radius:12px;background:var(--surface);padding:0 12px 0 35px;font-size:15px}
+.search input::placeholder{color:var(--ink-3)}
+.seg{display:flex;background:var(--surface);border-radius:12px;padding:3px;flex:none}
+.seg button{border:0;background:transparent;color:var(--ink-2);height:32px;padding:0 11px;border-radius:9px;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:600}
+
+/* ---- gallery ---- */
+.wrap{max-width:1240px;margin:0 auto;padding:6px 16px calc(40px + env(safe-area-inset-bottom,0px))}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(296px,1fr));gap:14px;align-items:start}
+.tile{background:var(--surface);border-radius:24px;padding:10px;display:flex;flex-direction:column}
+.mat{background:var(--surface-2);border-radius:18px;padding:16px 12px;display:flex;justify-content:center}
+.info{padding:12px 6px 2px}
+.nameline{display:flex;align-items:center;gap:6px}
+.name{flex:1;min-width:0;border:0;background:transparent;font-size:17px;font-weight:650;font-weight:600;padding:2px 6px;margin:0 -6px;border-radius:8px;text-overflow:ellipsis}
+.name:focus{background:var(--surface-2);outline:none}
+.chip{flex:none;font-size:12px;line-height:20px;padding:0 8px;border-radius:10px;background:var(--surface-2);color:var(--ink-2)}
+.chip.mine{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.chip.draft{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.note{display:block;width:100%;border:0;background:transparent;resize:none;overflow:hidden;font-size:14px;line-height:1.5;color:var(--ink-2);
+  padding:4px 6px;margin:2px -6px 0;border-radius:8px;min-height:29px;width:calc(100% + 12px)}
+.note::placeholder{color:var(--ink-3)}
+.note:focus{background:var(--surface-2);outline:none;color:var(--ink)}
+.acts{display:flex;gap:8px;padding:10px 0 0}
+.apply{flex:1;height:44px;border-radius:14px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:15px;
+  display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.apply svg{width:18px;height:18px}
+.sq{width:44px;height:44px;border-radius:14px;border:0;background:var(--surface-2);display:grid;place-items:center;color:var(--ink);flex:none;font-size:13px;font-weight:600}
+.sq svg{width:19px;height:19px}
+.sq.armed{background:var(--danger);color:#fff;width:auto;padding:0 12px}
+.empty{grid-column:1/-1;text-align:center;padding:72px 20px 40px}
+.empty h2{margin:0 0 6px;font-size:20px;font-weight:700;letter-spacing:-.01em}
+.empty p{margin:0 auto 20px;color:var(--ink-2);max-width:30em}
+.empty .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.gbtn{height:44px;border-radius:14px;border:0;background:var(--surface);color:var(--ink);padding:0 16px;font-weight:600;font-size:15px}
+.empty .pbtn{height:44px;border-radius:14px;padding:0 18px}
+
+/* ---- sheets ---- */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40;opacity:0;pointer-events:none;transition:opacity .22s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;margin:0 auto;width:100%;max-width:640px;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 12px);
+  background:var(--surface);border-radius:24px 24px 0 0;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+.sheet.on{transform:none;visibility:visible}
+.sh-head{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;position:relative;flex:none}
+.sh-head::before{content:"";position:absolute;left:50%;top:6px;width:36px;height:5px;border-radius:3px;background:var(--line);transform:translateX(-50%)}
+.sh-head h2{margin:0;font-size:18px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
+.sh-head .ibtn{background:var(--surface-2);width:34px;height:34px;border-radius:17px}
+.sh-head .ibtn svg{width:16px;height:16px}
+.sh-body{overflow:auto;padding:0 16px 16px;flex:1;min-height:0;overscroll-behavior:contain}
+.sh-foot{flex:none;border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
+.btnrow{display:flex;gap:8px}
+.btnrow .grow{flex:1}
+.fbtn{height:46px;border-radius:14px;border:0;font-weight:600;font-size:15px;padding:0 16px;background:var(--surface-2);color:var(--ink)}
+.fbtn.primary{background:var(--accent);color:var(--accent-ink)}
+.fbtn.quiet{background:transparent;color:var(--ink-2);padding:0 10px}
+.field{width:100%;height:46px;border:0;border-radius:14px;background:var(--surface-2);padding:0 14px;font-size:16px}
+.field::placeholder,.paste::placeholder{color:var(--ink-3)}
+.paste{width:100%;min-height:180px;border:0;border-radius:16px;background:var(--surface-2);padding:12px 14px;font-size:14px;line-height:1.5;resize:vertical;word-break:break-all}
+.help{color:var(--ink-2);font-size:13.5px;margin:10px 2px 0}
+.help.ok{color:var(--accent)}
+.menu{background:var(--surface-2);border-radius:16px;overflow:hidden}
+.menu button{width:100%;border:0;background:transparent;display:flex;align-items:center;gap:12px;padding:0 16px;height:52px;font-size:16px;text-align:left}
+.menu button+button{border-top:1px solid var(--line)}
+.menu svg{width:20px;height:20px;color:var(--ink-2)}
+.menu-note{color:var(--ink-3);font-size:13px;margin:12px 4px 0}
+
+/* editor */
+.ed{display:block}
+.ed-pv{height:236px;overflow:hidden;display:flex;justify-content:center;margin:0 -16px 6px;background:var(--surface-2);padding-top:14px}
+.ed-pv > *{transform:scale(.52);transform-origin:top center}
+.ed-pv .mini.std,.ed-pv .mini.cmp{width:300px}
+.grp-t{font-size:13px;font-weight:600;color:var(--ink-2);margin:18px 4px 6px}
+.grp{background:var(--surface-2);border-radius:16px;overflow:hidden}
+.crow{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:8px 12px;min-height:54px}
+.crow+.crow{border-top:1px solid var(--line)}
+.sw{width:34px;height:34px;border-radius:10px;position:relative;overflow:hidden;
+  background-image:linear-gradient(45deg,#c9c9c9 25%,transparent 25%,transparent 75%,#c9c9c9 75%),linear-gradient(45deg,#c9c9c9 25%,transparent 25%,transparent 75%,#c9c9c9 75%);
+  background-size:10px 10px;background-position:0 0,5px 5px;background-color:#fff;box-shadow:inset 0 0 0 1px rgba(127,127,127,.3)}
+.sw i{position:absolute;inset:0;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(127,127,127,.25)}
+.sw input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
+.crow.unset .sw{outline:1.5px dashed var(--ink-3);outline-offset:2px}
+.clabel{min-width:0;font-size:15px;line-height:1.3}
+.clabel small{display:block;font-size:12px;color:var(--ink-3);margin-top:1px}
+.hex{width:104px;height:34px;border:0;border-radius:10px;background:var(--surface);padding:0 10px;font-size:14px;font-variant-numeric:tabular-nums;letter-spacing:.02em;text-transform:uppercase}
+.hex.bad{box-shadow:inset 0 0 0 1.5px var(--danger)}
+details.more{margin-top:4px}
+details.more summary{list-style:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink-2);margin:18px 4px 6px;display:flex;align-items:center;gap:4px}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary svg{width:14px;height:14px;transition:transform .2s}
+details.more[open] summary svg{transform:rotate(90deg)}
+.alpha-tip{color:var(--ink-3);font-size:12.5px;margin:14px 4px 0}
+
+@media (min-width:760px){
+  .titlebar h1{font-size:28px}
+  .top-in{padding:18px 24px 12px}
+  .wrap{padding:8px 24px 48px}
+  .grid{gap:18px}
+  .sheet{top:50%;bottom:auto;left:50%;right:auto;width:min(640px,calc(100vw - 48px));border-radius:24px;max-height:min(86vh,860px);
+    transform:translate(-50%,-46%) scale(.98);opacity:0;transition:transform .22s,opacity .22s}
+  .sheet.on{transform:translate(-50%,-50%);opacity:1}
+  .sheet.wide{width:min(920px,calc(100vw - 48px))}
+  .sh-head::before{display:none}
+  .sh-head{padding:18px 20px 12px}
+  .sh-body{padding:0 20px 20px}
+  .sh-foot{padding:14px 20px 16px}
+  .ed{display:grid;grid-template-columns:268px 1fr;gap:20px;align-items:start}
+  .ed-pv{position:sticky;top:0;height:auto;margin:0;padding:18px 0;border-radius:18px}
+  .ed-pv > *{transform:none}
+  .ed-pv .mini.std,.ed-pv .mini.cmp{width:232px}
+  .ed-list .grp-t:first-child{margin-top:0}
+  .sh-foot.ed-foot{flex-direction:row;align-items:center}
+  .sh-foot.ed-foot .field{flex:1}
+}
+@media (max-width:420px){
+  .seg button{padding:0 9px}
+}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(8px);z-index:60;max-width:calc(100% - 32px);
+  background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;font-size:14px;line-height:1.4;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){.sheet,.scrim,.toast,details.more summary svg{transition:none}}
+
+/* ---- phone mock (iOS 26 style home) ---- */
+.phone{width:196px;flex:none;border-radius:30px;padding:6px;background:#0d0d0f;box-shadow:0 0 0 1px rgba(127,127,127,.3)}
+.screen{position:relative;border-radius:25px;overflow:hidden;height:404px;display:flex;flex-direction:column;
+  font-family:-apple-system,"SF Pro Text","PingFang SC",system-ui,sans-serif;font-size:8.5px;line-height:1.25}
+.screen svg{display:block}
+.sb{height:22px;display:flex;justify-content:space-between;align-items:center;padding:4px 16px 0;font-size:9px;font-weight:600;flex:none;position:relative}
+.sb .island{position:absolute;left:50%;top:5px;width:50px;height:14px;border-radius:8px;background:#000;transform:translateX(-50%)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 7px;flex:none}
+.nav b{font-size:10px;font-weight:600}
+.cbtn{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:rgba(127,127,127,.2);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.18)}
+.cbtn svg{width:13px;height:13px}
+.cbtn.flat{background:none;box-shadow:none}
+.body{flex:1;overflow:hidden;padding:0 7px}
+.grp{border-radius:14px;overflow:hidden;margin-bottom:6px}
+.r{display:flex;align-items:center;gap:6px;padding:0 8px;height:26px;position:relative}
+.r+.r::before{content:"";position:absolute;top:0;left:28px;right:8px;border-top:.6px solid var(--sep)}
+.r.node{height:25px}.r.node+.r.node::before{left:26px}
+.ico{width:12px;height:12px;flex:none}
+.r .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r .t small{display:block;font-size:5.6px;letter-spacing:.01em;margin-top:1px}
+.r .d{font-size:8px;white-space:nowrap}
+.r .ms{font-size:7px}
+.tog{width:26px;height:14px;border-radius:7px;position:relative;flex:none}
+.tog::after{content:"";position:absolute;right:1.5px;top:1.5px;width:15px;height:11px;border-radius:6px;background:#fff}
+.tools{display:flex;justify-content:flex-end;gap:9px;padding:1px 10px 5px}
+.tools svg{width:10px;height:10px}
+.flag{width:12px;height:12px;border-radius:50%;overflow:hidden;flex:none;display:grid;place-items:center;font-size:12px;line-height:1}
+.sel{position:absolute;left:2px;width:4px;height:4px;border-radius:50%}
+.foot{text-align:center;font-size:6.5px;padding:5px 0}
+.tabs{display:flex;justify-content:space-around;align-items:center;padding:5px 6px 13px;flex:none}
+.tab{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:6.5px;font-weight:600;padding:3px 9px;border-radius:12px}
+.tab svg{width:12px;height:12px}
+
+.mini{flex:none;align-self:flex-start;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;
+  font-family:-apple-system,"SF Pro Text","PingFang SC",system-ui,sans-serif;box-shadow:0 0 0 1px rgba(127,127,127,.25)}
+.mini.std{width:232px}.mini.cmp{width:206px}
+.mini svg{display:block}
+.mnav{display:flex;align-items:center;justify-content:space-between;padding:13px 14px 11px}
+.mnav b{font-size:16px;font-weight:600;letter-spacing:.01em}
+.mnav .cbtn{width:26px;height:26px}
+.mnav svg{width:16px;height:16px}
+.mbody{padding:0 10px 10px}
+.mg{border-radius:15px;overflow:hidden;margin-bottom:9px}
+.mg:last-child{margin-bottom:0}
+.mr{display:flex;align-items:center;gap:9px;padding:0 12px;min-height:40px;font-size:13.5px;position:relative}
+.mr+.mr::before{content:"";position:absolute;top:0;left:0;right:0;border-top:.7px solid var(--sep)}
+.mr .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mr .t small{display:block;font-size:12.5px;margin-top:1px}
+.mr .d{font-size:13px;white-space:nowrap}
+.mr.node{min-height:50px;padding-left:26px}
+.mi{width:15px;height:15px;flex:none}
+.mtog{width:38px;height:21px;border-radius:11px;position:relative;flex:none}
+.mtog::after{content:"";position:absolute;right:2px;top:2px;width:23px;height:17px;border-radius:9px;background:#fff}
+.mdot{position:absolute;left:10px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%}
+.mtabs{display:flex;justify-content:space-around;padding:9px 6px 12px;margin-top:auto}
+.mtab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px}
+.mtab svg{width:18px;height:18px}
+
+.tile .mini{max-width:100%}
+@media (max-width:520px){ .tile .mini.std,.tile .mini.cmp{width:100%;max-width:330px} }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="titlebar">
+      <h1>配色台</h1>
+      <span class="count" id="count"></span>
+      <button class="ibtn" id="menuBtn" aria-label="更多操作"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+      <button class="pbtn" id="importOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg>导入</button>
+    </div>
+    <div class="filterbar">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input id="q" type="search" placeholder="搜索名称或备注" aria-label="搜索名称或备注"></label>
+      <div class="seg" role="group" aria-label="预览样式"><button data-view="std">标准</button><button data-view="cmp">精简</button><button data-view="full">完整</button></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap"><div class="grid" id="grid"></div></main>
+
+<div class="scrim" id="scrim"></div>
+
+<section class="sheet" id="sh-import" role="dialog" aria-modal="true" aria-labelledby="sh-import-t">
+  <div class="sh-head"><h2 id="sh-import-t">导入配色</h2><button class="ibtn" data-close aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="sh-body">
+    <textarea class="paste" id="input" placeholder="粘贴 shadowrocket://color 链接，一行一个，可以一次粘贴很多条。&#10;&#10;链接前面写上文字，会作为名字：&#10;原子灰 shadowrocket://color?…"></textarea>
+    <p class="help" id="hint">重复的链接会自动跳过。</p>
+  </div>
+  <div class="sh-foot">
+    <div class="btnrow">
+      <button class="fbtn quiet" id="sample">载入示例</button>
+      <button class="fbtn grow" id="paste">从剪贴板粘贴</button>
+      <button class="fbtn primary grow" id="importBtn">导入</button>
+    </div>
+  </div>
+</section>
+
+<section class="sheet" id="sh-menu" role="dialog" aria-modal="true" aria-labelledby="sh-menu-t">
+  <div class="sh-head"><h2 id="sh-menu-t">更多</h2><button class="ibtn" data-close aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="sh-body">
+    <div class="menu">
+      <button id="copyAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>复制全部链接</button>
+      <button id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>导出备份</button>
+      <button id="importFileBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7 9l5-5 5 5M5 20h14"/></svg>导入备份</button>
+
+    </div>
+    <p class="menu-note" id="storeNote">配色保存在这台手机上。删掉主屏幕图标会连同数据一起删除，记得定期导出备份。</p>
+    <input type="file" id="importFile" accept=".json,application/json" hidden>
+
+  </div>
+</section>
+
+<section class="sheet wide" id="sh-edit" role="dialog" aria-modal="true" aria-labelledby="sh-edit-t">
+  <div class="sh-head"><h2 id="sh-edit-t">改颜色</h2><button class="ibtn" data-close aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="sh-body"><div class="ed"><div class="ed-pv" id="edPv"></div><div class="ed-list" id="edList"></div></div></div>
+  <div class="sh-foot ed-foot">
+    <input class="field" id="edName" placeholder="新配色的名字（备注）" maxlength="40" aria-label="新配色的名字">
+    <div class="btnrow">
+      <button class="fbtn quiet" id="edReset">还原</button>
+      <button class="fbtn" id="edOverwrite" hidden>覆盖保存</button>
+      <button class="fbtn primary grow" id="edSaveAs">另存为新配色</button>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const SV=(d,w)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w||1.7}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICON={
+  scan:SV('<path d="M4 9V6a2 2 0 0 1 2-2h3M15 4h3a2 2 0 0 1 2 2v3M20 15v3a2 2 0 0 1-2 2h-3M9 20H6a2 2 0 0 1-2-2v-3M7 12h10"/>'),
+  plus:SV('<path d="M12 4v16M4 12h16"/>',1.6),
+  rocket:SV('<path d="M14.5 4.5c2.5-1 5-1 5-1s0 2.5-1 5L12 15l-3-3z"/><path d="M9 12l-3 .5-2 2.5 3.5.5M12 15l-.5 3-2.5 2-.5-3.5M6 18l-2 2M8 19l-1.5 1.5M5 16l-1.5 1.5"/><circle cx="15" cy="9" r="1.3"/>'),
+  helm:SV('<circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4M5.3 5.3l2.8 2.8M15.9 15.9l2.8 2.8M5.3 18.7l2.8-2.8M15.9 8.1l2.8-2.8"/>'),
+  gauge:SV('<circle cx="12" cy="12" r="9"/><path d="M12 14l4-5M7 16.5h10M6.5 10.5l1 .5M12 6.5v1M17.5 10.5l-1 .5"/>'),
+  tcirc:SV('<circle cx="12" cy="12" r="9"/><path d="M8.5 8h7M12 8v9"/>'),
+  info:SV('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.6v.1"/>'),
+  chevR:SV('<path d="M9 5l7 7-7 7"/>',2),
+  chevD:SV('<path d="M5 9l7 7 7-7"/>',2),
+  sign:SV('<path d="M5 5h12l2.5 2.5L17 10H5zM10 10v10M7 20h6M10 3v2"/>'),
+  sync:SV('<path d="M20 11a8 8 0 0 0-14.5-4M4 13a8 8 0 0 0 14.5 4"/><path d="M5 3v4h4M19 21v-4h-4"/>',2),
+  more:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
+  home:SV('<path d="M3.5 11 12 4l8.5 7M6 9.5V20h4.5v-5.5h3V20H18V9.5"/>'),
+  folder:SV('<path d="M3 19V6a1 1 0 0 1 1-1h5l2 2h8a1 1 0 0 1 1 1v2M3 19l2.6-8.2a1 1 0 0 1 1-.8H21l-2.7 8.4a1 1 0 0 1-1 .6z"/>'),
+  pulse:SV('<path d="M2 12h4l2-5 3.5 12L14 9l1.5 3H22"/>'),
+  gear:SV('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',1.5)
+};
+
+ICON.search=SV('<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>',2);
+ICON.close=SV('<path d="M6 6l12 12M18 6L6 18"/>',2.2);
+ICON.copy=SV('<rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>');
+ICON.trash=SV('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>');
+ICON.brush=SV('<path d="M14.5 4.5l5 5L10 19H5v-5z"/><path d="M12.5 6.5l5 5"/>');
+ICON.download=SV('<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>');
+ICON.upload=SV('<path d="M12 15V4M7 9l5-5 5 5M5 20h14"/>');
+ICON.open=SV('<path d="M14 5h5v5M19 5l-8 8M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/>');
+ICON.chev=SV('<path d="M9 5l7 7-7 7"/>',2.2);
+
+const SAMPLES=[["示例 · 浅色","shadowrocket://color?NavigationBarColor=%23FCFFFFFF&NavigationBar2Color=%23FFFFFF&NavigationBarTextColor=%23262626&NavigationBar2TextColor=%23262626&TabBarColor=%23FFFFFF&TabBarBorderColor=%23FFFFFF&TabBarSelectedColor=%23262626&TabBarUnselectedColor=%239F9FA1&TableBackgroundColor=%23FFFFFF&TableCellBackgroundColor=%23F2F2F2&TableCellSelectedBackgroundColor=%23FFFFFF&TableSeparatorColor=%23FFFFFF&TextFieldTextColor=%23535353&PlaceholderColor=%239F9FA1&TextLabelTextColor=%23262626&DetailLabelTextColor=%23535353&TextLabelDeleteColor=%23E8886D&HeaderFooterTextColor=%239F9FA1&SearchFieldBackgroundColor=%23F2F2F2&IndicatorColor=%23CCCCCC&ButtonIconColor=%23535353&ButtonNormalColor=%23535353&ButtonNormal2Color=%23535353&ButtonNormal3Color=%23535353&ButtonHighlightedColor=%23CCCCCC&ButtonHighlighted2Color=%23CCCCCC&ButtonHighlighted3Color=%23202024&ButtonDisabledColor=%23202024&ButtonDisabled2Color=%2380FFFFFF&PingSuccessTextColor=%2326BBFF&PingTimeoutTextColor=%23E8886D&DefaultDotColor=%2326BBFF&HUDBackgroundColor=%23F2F2F2&v=1.0"],["示例 · 深色","shadowrocket://color?NavigationBarColor=%23FC202024&NavigationBar2Color=%23202024&NavigationBarTextColor=%23CCCCCC&NavigationBar2TextColor=%23CCCCCC&TabBarColor=%23202024&TabBarBorderColor=%23202024&TabBarSelectedColor=%23CCCCCC&TabBarUnselectedColor=%23646464&TableBackgroundColor=%23202024&TableCellBackgroundColor=%23343338&TableCellSelectedBackgroundColor=%23202024&TableSeparatorColor=%23202024&TextFieldTextColor=%23CCCCCC&PlaceholderColor=%23646464&TextLabelTextColor=%23CCCCCC&DetailLabelTextColor=%23646464&TextLabelDeleteColor=%23E8886D&HeaderFooterTextColor=%23646464&SearchFieldBackgroundColor=%23343338&IndicatorColor=%23CCCCCC&ButtonIconColor=%239F9FA1&ButtonNormalColor=%239F9FA1&ButtonNormal2Color=%239F9FA1&ButtonNormal3Color=%23646464&ButtonHighlightedColor=%23CCCCCC&ButtonHighlighted2Color=%23CCCCCC&ButtonHighlighted3Color=%23202024&ButtonDisabledColor=%23202024&ButtonDisabled2Color=%2380FFFFFF&PingSuccessTextColor=%2326BBFF&PingTimeoutTextColor=%23E8886D&DefaultDotColor=%2326BBFF&HUDBackgroundColor=%23343338&v=1.0"]];
+const LABELS={
+  NavigationBarColor:"导航栏背景",NavigationBarTextColor:"标题文字",ButtonNormalColor:"扫码、➕、返回",ButtonDisabledColor:"“保存”等文字按钮",
+  TableBackgroundColor:"页面背景",TableCellBackgroundColor:"卡片背景",TableSeparatorColor:"分隔线",
+  TextLabelTextColor:"主文字",DetailLabelTextColor:"副文字、流量、协议",HeaderFooterTextColor:"分组标题、底部说明",TextFieldTextColor:"输入框文字",
+  ButtonIconColor:"列表图标、开关、ⓘ",ButtonNormal3Color:"首页工具栏图标",PingSuccessTextColor:"延迟数字",PingTimeoutTextColor:"超时文字",DefaultDotColor:"选中节点圆点",
+  TabBarColor:"标签栏背景",TabBarSelectedColor:"选中的标签",
+  NavigationBar2Color:"导航栏背景 2",NavigationBar2TextColor:"导航栏文字 2",TabBarBorderColor:"标签栏边线",TabBarUnselectedColor:"未选中的标签",
+  TableCellSelectedBackgroundColor:"按下时的卡片",PlaceholderColor:"占位文字",TextLabelDeleteColor:"删除文字",SearchFieldBackgroundColor:"搜索框背景",
+  IndicatorColor:"指示器",ButtonNormal2Color:"按钮 2",ButtonHighlightedColor:"按钮高亮",ButtonHighlighted2Color:"按钮高亮 2",ButtonHighlighted3Color:"按钮高亮 3",
+  ButtonDisabled2Color:"按钮禁用 2",HUDBackgroundColor:"提示框背景"
+};
+const NOTES={PingTimeoutTextColor:"未实测",TabBarBorderColor:"新版看不到",TabBarUnselectedColor:"新版不生效",PlaceholderColor:"新版不生效",
+  TableCellSelectedBackgroundColor:"未实测",TextLabelDeleteColor:"未实测",HUDBackgroundColor:"未实测"};
+const GROUPS=[
+  ["导航栏",["NavigationBarColor","NavigationBarTextColor","ButtonNormalColor","ButtonDisabledColor"]],
+  ["页面与卡片",["TableBackgroundColor","TableCellBackgroundColor","TableSeparatorColor"]],
+  ["文字",["TextLabelTextColor","DetailLabelTextColor","HeaderFooterTextColor","TextFieldTextColor"]],
+  ["图标与状态",["ButtonIconColor","ButtonNormal3Color","PingSuccessTextColor","PingTimeoutTextColor","DefaultDotColor"]],
+  ["标签栏",["TabBarColor","TabBarSelectedColor"]]
+];
+const GROUPED=new Set(GROUPS.flatMap(g=>g[1]));
+const OTHER=Object.keys(LABELS).filter(k=>!GROUPED.has(k));
+const DEF={NavigationBarColor:"#F8F8F8",NavigationBarTextColor:"#000000",TabBarColor:"#F8F8F8",TabBarBorderColor:"#DDDDDD",
+  TabBarSelectedColor:"#007AFF",TabBarUnselectedColor:"#999999",TableBackgroundColor:"#F2F2F7",TableCellBackgroundColor:"#FFFFFF",
+  TableSeparatorColor:"#E0E0E0",PlaceholderColor:"#8E8E93",TextLabelTextColor:"#000000",DetailLabelTextColor:"#8E8E93",
+  TextLabelDeleteColor:"#FF3B30",HeaderFooterTextColor:"#6D6D72",SearchFieldBackgroundColor:"#E5E5EA",IndicatorColor:"#C7C7CC",
+  ButtonIconColor:"#007AFF",ButtonNormalColor:"#007AFF",ButtonNormal3Color:"#007AFF",ButtonDisabledColor:"#007AFF",
+  PingSuccessTextColor:"#34C759",PingTimeoutTextColor:"#FF3B30",DefaultDotColor:"#007AFF",TextFieldTextColor:"#000000"};
+const defOf=k=>DEF[k]||"#888888";
+
+/* ---------- parsing ---------- */
+const LINK_RE=/shadowrocket:\/\/color\?[^\s"'<>`]+/gi;
+function parseInput(text){
+  const out=[];
+  for(const line of text.split(/\r?\n/)){
+    const links=line.match(LINK_RE); if(!links) continue;
+    const before=line.slice(0,line.search(LINK_RE)).replace(/[:：|｜\-—\s]+$/,"").trim();
+    links.forEach((u,i)=>out.push({url:u.trim(),name:(i===0&&before&&before.length<=40)?before:""}));
+  }
+  return out;
+}
+function parseColors(url){
+  const q=url.slice(url.indexOf("?")+1); const map={};
+  for(const part of q.split("&")){
+    const k=part.split("=")[0]; const v=part.slice(k.length+1);
+    if(!k||!/Color$/.test(k)) continue;
+    let val; try{val=decodeURIComponent(v)}catch(e){val=v}
+    val=val.trim(); if(!val.startsWith("#")) val="#"+val;
+    if(/^#([0-9a-f]{6}|[0-9a-f]{8})$/i.test(val)) map[k]=val.toUpperCase();
+  }
+  return map;
+}
+// Shadowrocket uses #AARRGGBB for 8-digit codes
+function css(hex){
+  if(!hex) return "transparent";
+  const h=hex.slice(1); if(h.length===6) return "#"+h;
+  const a=parseInt(h.slice(0,2),16)/255,r=parseInt(h.slice(2,4),16),g=parseInt(h.slice(4,6),16),b=parseInt(h.slice(6,8),16);
+  return `rgba(${r},${g},${b},${a.toFixed(3)})`;
+}
+function buildUrl(orig,d){
+  const i=orig.indexOf("?"); const base=orig.slice(0,i+1);
+  const parts=orig.slice(i+1).split("&").filter(Boolean); const seen=new Set();
+  const out=parts.map(p=>{const k=p.split("=")[0]; if(d&&d[k]){seen.add(k);return k+"="+encodeURIComponent(d[k])} return p});
+  const extra=Object.keys(d||{}).filter(k=>!seen.has(k)).map(k=>k+"="+encodeURIComponent(d[k]));
+  const vi=out.findIndex(p=>p.startsWith("v="));
+  if(vi<0) out.push(...extra); else out.splice(vi,0,...extra);
+  return base+out.join("&");
+}
+function rgb(hex){const h=hex.slice(1);const s=h.length===8?h.slice(2):h;return[0,2,4].map(i=>parseInt(s.slice(i,i+2),16))}
+function lum(hex){const [r,g,b]=rgb(hex).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+
+function phone(c){
+  const g=k=>css(c[k]||DEF[k]);
+  const bg=c.TableBackgroundColor||DEF.TableBackgroundColor;
+  const navHex=c.NavigationBarColor||DEF.NavigationBarColor;
+  const navClear=navHex.length===9&&parseInt(navHex.slice(1,3),16)<128;
+  const statusInk=lum(navClear?bg:navHex)<.35?"#fff":"#000";
+  const sys=lum(bg)<.35?"rgba(235,235,245,.3)":"rgba(60,60,67,.3)";
+  const navBtn=g("ButtonNormalColor");
+  const tint=g("ButtonIconColor"), txt=g("TextLabelTextColor"), det=g("DetailLabelTextColor"), cell=g("TableCellBackgroundColor");
+  const ok=g("PingSuccessTextColor"), bad=g("PingTimeoutTextColor"), dot=g("DefaultDotColor");
+  const ic=(n,col)=>`<span class="ico" style="color:${col||tint}">${ICON[n]}</span>`;
+  const node=(flag,name,ms,col,selected)=>`<div class="r node" style="color:${txt}">${selected?`<span class="sel" style="background:${dot}"></span>`:""}<span class="flag">${flag}</span><span class="t">${name}<small style="color:${det}">VLESS / XTLS-RPRX-VISION / UDP</small></span><span class="d ms" style="color:${col}">${ms}</span>${ic("info")}</div>`;
+  const selTab=c.TabBarSelectedColor||DEF.TabBarSelectedColor;
+  return `<div class="phone pv" aria-hidden="true"><div class="screen" style="background:${g("TableBackgroundColor")};--sep:${g("TableSeparatorColor")}">
+    <div style="background:${g("NavigationBarColor")}">
+      <div class="sb" style="color:${statusInk}"><span>9:41</span><span class="island"></span><span>5G 100</span></div>
+      <div class="nav"><span class="cbtn${navClear?"":" flat"}" style="color:${navBtn}">${ICON.scan}</span><b style="color:${g("NavigationBarTextColor")}">Shadowrocket</b><span class="cbtn${navClear?"":" flat"}" style="color:${navBtn}">${ICON.plus}</span></div>
+    </div>
+    <div class="body">
+      <div class="grp" style="background:${cell}">
+        <div class="r" style="color:${txt}">${ic("rocket")}<span class="t">连接线路 4</span><span class="tog" style="background:${tint}"></span></div>
+        <div class="r" style="color:${txt}">${ic("helm")}<span class="t">全局路由</span><span class="d" style="color:${det}">配置</span><span class="ico" style="color:${sys};width:8px;height:8px">${ICON.chevR}</span></div>
+        <div class="r" style="color:${txt}">${ic("gauge")}<span class="t">连通性测试</span>${ic("tcirc")}</div>
+      </div>
+      <div class="tools" style="color:${g("ButtonNormal3Color")}">${ICON.sign}${ICON.sync}${ICON.more}</div>
+      <div class="grp" style="background:${cell}">
+        <div class="r" style="color:${txt}">${ic("chevR")}<span class="t">本地服务器</span>${ic("info")}</div>
+      </div>
+      <div class="grp" style="background:${cell};margin-top:9px">
+        <div class="r" style="color:${txt};height:28px">${ic("chevD")}<span class="t">我的订阅<small style="color:${det}">↑:1.16G,↓:14.26G,TOT:470G,EXPIRE:2027-01-23</small></span>${ic("sync")}${ic("info")}</div>
+        ${node("🇭🇰","连接线路 1","48ms",ok)}
+        ${node("🇯🇵","连接线路 2","76ms",ok)}
+        ${node("🇺🇸","连接线路 3","超时",bad)}
+        ${node("🇸🇬","连接线路 4","141ms",ok,true)}
+      </div>
+      <div class="foot" style="color:${g("HeaderFooterTextColor")}">点击订阅可折叠和展开服务器</div>
+    </div>
+    <div class="tabs" style="background:${g("TabBarColor")}">
+      <span class="tab" style="color:color-mix(in srgb, ${css(selTab)} 80%, #fff);background:rgba(255,255,255,.13)">${ICON.home}首页</span>
+      <span class="tab" style="color:${lum(c.TabBarColor||DEF.TabBarColor)<.4?`color-mix(in srgb, #fff 85%, ${g("TabBarColor")})`:`color-mix(in srgb, #000 55%, ${g("TabBarColor")})`}">${ICON.folder}配置</span>
+      <span class="tab" style="color:${lum(c.TabBarColor||DEF.TabBarColor)<.4?`color-mix(in srgb, #fff 85%, ${g("TabBarColor")})`:`color-mix(in srgb, #000 55%, ${g("TabBarColor")})`}">${ICON.pulse}数据</span>
+      <span class="tab" style="color:${lum(c.TabBarColor||DEF.TabBarColor)<.4?`color-mix(in srgb, #fff 85%, ${g("TabBarColor")})`:`color-mix(in srgb, #000 55%, ${g("TabBarColor")})`}">${ICON.gear}设置</span>
+    </div>
+  </div></div>`;
+}
+ICON.route=SV('<circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8.2 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.8"/>');
+ICON.rocket2=SV('<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>');
+const VIEW_KEY="sr-color-board-view";
+let view=(()=>{try{return localStorage.getItem(VIEW_KEY)||"std"}catch(e){return "std"}})();
+function preview(c){return view==="full"?phone(c):mini(c,view)}
+function mini(c,variant){
+  const g=k=>css(c[k]||DEF[k]);
+  const bg=c.TableBackgroundColor||DEF.TableBackgroundColor;
+  const navHex=c.NavigationBarColor||DEF.NavigationBarColor;
+  const navClear=navHex.length===9&&parseInt(navHex.slice(1,3),16)<128;
+  const tint=g("ButtonIconColor"), txt=g("TextLabelTextColor"), det=g("DetailLabelTextColor"), cell=g("TableCellBackgroundColor");
+  const ok=g("PingSuccessTextColor"), dot=g("DefaultDotColor"), navBtn=g("ButtonNormalColor"), tab=g("TabBarColor");
+  const sel=c.TabBarSelectedColor||DEF.TabBarSelectedColor;
+  const unsel=lum(c.TabBarColor||DEF.TabBarColor)<.4?`color-mix(in srgb, #fff 62%, ${tab})`:`color-mix(in srgb, #000 50%, ${tab})`;
+  const std=variant==="std";
+  const node=(name,proto,ms,on)=>`<div class="mr node" style="color:${txt}">${on?`<span class="mdot" style="background:${dot}"></span>`:""}<span class="t">${name}<small style="color:${det}">${proto}</small></span><span class="d" style="color:${ok}">${ms}</span></div>`;
+  const t=(icon,label,on)=>`<span class="mtab" style="color:${on?css(sel):unsel}">${ICON[icon]}${label}</span>`;
+  return `<div class="mini pv ${variant}" aria-hidden="true" style="background:${g("TableBackgroundColor")};--sep:${g("TableSeparatorColor")}">
+    <div class="mnav" style="background:${g("NavigationBarColor")}"><span class="cbtn${navClear?"":" flat"}" style="color:${navBtn}">${ICON.scan}</span><b style="color:${g("NavigationBarTextColor")}">${std?"Shadowrocket":"Rocket"}</b><span class="cbtn${navClear?"":" flat"}" style="color:${navBtn}">${ICON.plus}</span></div>
+    <div class="mbody">
+      <div class="mg" style="background:${cell}">
+        <div class="mr" style="color:${txt}"><span class="mi" style="color:${tint}">${ICON.rocket2}</span><span class="t">${std?"连接线路 4":"线路 4"}</span><span class="mtog" style="background:${tint}"></span></div>
+        ${std?`<div class="mr" style="color:${txt}"><span class="mi" style="color:${tint}">${ICON.route}</span><span class="t">全局路由</span><span class="d" style="color:${det}">配置</span></div>`:""}
+      </div>
+      <div class="mg" style="background:${cell}">
+        ${std?node("连接线路 1","VLESS / UDP","143ms")+node("连接线路 2","VLESS / UDP","143ms")+node("连接线路 4","VLESS / UDP","141ms",true)
+             :node("线路 1","VLESS","143ms")+node("线路 4","VLESS","141ms",true)}
+      </div>
+    </div>
+    <div class="mtabs" style="background:${tab}">${t("home","首页",true)}${t("folder","配置")}${std?t("gear","设置"):""}</div>
+  </div>`;
+}
+
+
+/* ---------- storage ---------- */
+let items=[];
+const LS_KEY="sr-color-board-v1";
+function loadLocal(){try{const r=localStorage.getItem(LS_KEY);return r?JSON.parse(r):[]}catch(e){return[]}}
+function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify(items));return true}catch(e){return false}}
+
+async function persist(item){if(!saveLocal()) toast("保存失败：手机存储空间不足",2600)}
+async function remove(id){saveLocal()}
+
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+function toast(t,ms){const el=$("#toast");el.textContent=t;el.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("show"),ms||1700)}
+async function writeClip(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();return ok}}
+async function copy(t,msg){toast((await writeClip(t))?(msg||"已复制"):"复制失败，请长按手动复制")}
+const uidGen=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const byId=id=>items.find(i=>i.id===id);
+function grow(el){el.style.height="auto";el.style.height=el.scrollHeight+"px"}
+
+/* ---------- sheets ---------- */
+let openSheetId=null, lastFocus=null;
+function openSheet(id){
+  if(openSheetId) closeSheet(true);
+  lastFocus=document.activeElement; openSheetId=id;
+  $("#scrim").classList.add("on"); $("#"+id).classList.add("on"); document.body.classList.add("locked");
+  setTimeout(()=>{const f=id==="sh-edit"?$("#"+id+" [data-close]"):$("#"+id).querySelector("textarea,button:not([data-close])");f&&f.focus({preventScroll:true})},60);
+}
+function closeSheet(silent){
+  if(!openSheetId) return;
+  $("#"+openSheetId).classList.remove("on"); $("#scrim").classList.remove("on"); document.body.classList.remove("locked");
+  if(openSheetId==="sh-edit"){editor.id=null; if(!silent) render()}
+  openSheetId=null; if(!silent&&lastFocus&&lastFocus.focus) lastFocus.focus({preventScroll:true});
+}
+$("#scrim").onclick=()=>closeSheet();
+document.addEventListener("click",e=>{if(e.target.closest("[data-close]")) closeSheet()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&openSheetId) closeSheet()});
+
+/* ---------- gallery ---------- */
+const editing={};   // id -> draft colors (unsaved)
+let q="";
+function tile(it){
+  const c=editing[it.id]||parseColors(it.url);
+  const bg=c.TableBackgroundColor||DEF.TableBackgroundColor;
+  const tone=lum(bg)<.35?"暗底":"亮底";
+  return `<article class="tile" data-id="${it.id}">
+    <div class="mat">${preview(c)}</div>
+    <div class="info">
+      <div class="nameline">
+        <input class="name" value="${esc(it.name)}" aria-label="名字" maxlength="40">
+        ${editing[it.id]?'<span class="chip draft">改色未保存</span>':""}
+        ${it.mine?'<span class="chip mine">我的</span>':""}
+        <span class="chip">${tone}</span>
+      </div>
+      <textarea class="note" rows="1" placeholder="添加备注" aria-label="备注">${esc(it.note||"")}</textarea>
+    </div>
+    <div class="acts">
+      <a class="apply" data-act="apply" href="${esc(it.url)}">${ICON.open}应用到小火箭</a>
+      <button class="sq" data-act="edit" aria-label="改颜色" title="改颜色">${ICON.brush}</button>
+      <button class="sq" data-act="copy" aria-label="复制链接" title="复制链接">${ICON.copy}</button>
+      <button class="sq" data-act="del" aria-label="删除" title="删除">${ICON.trash}</button>
+    </div>
+  </article>`;
+}
+function render(){
+  const ql=q.trim().toLowerCase();
+  const list=items.filter(i=>!ql||(i.name+" "+(i.note||"")).toLowerCase().includes(ql));
+  $("#count").textContent=items.length?(ql?`${list.length} / ${items.length}`:`${items.length} 个`):"";
+  const grid=$("#grid");
+  if(!items.length){
+    grid.innerHTML=`<div class="empty"><h2>还没有配色</h2><p>把小火箭的配色链接粘贴进来，每条都会生成一张预览，可以改名、写备注、改颜色。</p>
+      <div class="row"><button class="gbtn" data-act="sample">先看看示例</button><button class="pbtn" data-act="open-import">${ICON.plus}导入配色</button></div></div>`;
+    return;
+  }
+  if(!list.length){grid.innerHTML=`<div class="empty"><h2>没有找到</h2><p>没有名字或备注包含“${esc(q.trim())}”的配色。</p></div>`;return}
+  grid.innerHTML=list.map(tile).join("");
+  grid.querySelectorAll(".note").forEach(grow);
+}
+
+function doImport(text){
+  const parsed=parseInput(text); const hint=$("#hint");
+  if(!parsed.length){hint.className="help";hint.textContent="没有找到 shadowrocket://color? 开头的链接，检查一下粘贴的内容。";return 0}
+  const have=new Set(items.map(i=>i.url)); let added=0,dup=0,bad=0; const now=Date.now(); let n=items.length;
+  parsed.forEach((p,idx)=>{
+    if(have.has(p.url)){dup++;return}
+    if(!Object.keys(parseColors(p.url)).length){bad++;return}
+    have.add(p.url); n++; added++;
+    const it={id:uidGen(),name:p.name||("配色 "+n),note:"",url:p.url,createdAt:now+parsed.length-idx};
+    items.push(it); persist(it);
+  });
+  items.sort((a,b)=>b.createdAt-a.createdAt);
+  const msg=`导入 ${added} 个`+(dup?`，跳过重复 ${dup} 个`:"")+(bad?`，${bad} 个无法识别`:"");
+  hint.className="help ok"; hint.textContent=msg+"。";
+  render();
+  if(added){$("#input").value=""; closeSheet(); toast(msg)}
+  return added;
+}
+
+const timers={};
+$("#grid").addEventListener("input",e=>{
+  const t=e.target, card=t.closest(".tile"); if(!card) return;
+  const it=byId(card.dataset.id); if(!it) return;
+  if(t.classList.contains("name")) it.name=t.value;
+  else if(t.classList.contains("note")){it.note=t.value; grow(t)}
+  else return;
+  clearTimeout(timers[it.id]); timers[it.id]=setTimeout(()=>persist(it),500);
+});
+$("#grid").addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]"); if(!b) return;
+  if(b.dataset.act==="sample"){doImport(SAMPLES.map(s=>s[0]+" "+s[1]).join("\n"));return}
+  if(b.dataset.act==="open-import"){openSheet("sh-import");return}
+  const card=b.closest(".tile"); const it=card&&byId(card.dataset.id); if(!it) return;
+  const act=b.dataset.act;
+  if(act==="apply"){writeClip(it.url); toast("正在打开小火箭…没跳转的话，链接已复制，到小火箭“配置”页点 ➕ 粘贴",4200); return}
+  if(act==="copy") copy(it.url,"链接已复制");
+  if(act==="edit") openEditor(it.id);
+  if(act==="del"){
+    if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="删除？";setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.innerHTML=ICON.trash}},2600);return}
+    items=items.filter(i=>i.id!==it.id); delete editing[it.id]; remove(it.id); render(); toast("已删除");
+  }
+});
+
+/* ---------- editor ---------- */
+const editor={id:null};
+function openEditor(id){
+  const it=byId(id); if(!it) return;
+  if(!editing[id]) editing[id]=parseColors(it.url);
+  editor.id=id;
+  $("#sh-edit-t").textContent="改颜色 · "+it.name;
+  $("#edName").value="";
+  $("#edOverwrite").hidden=!it.mine;
+  renderEditor(); openSheet("sh-edit");
+  $("#edList").scrollTop=0; $("#sh-edit .sh-body").scrollTop=0;
+}
+function crow(k,d){
+  const set=!!d[k], v=set?d[k]:defOf(k);
+  return `<div class="crow${set?"":" unset"}" data-k="${k}">
+    <label class="sw"><i style="background:${css(v)}"></i><input type="color" value="#${v.slice(-6)}" aria-label="${LABELS[k]||k}"></label>
+    <div class="clabel">${LABELS[k]||k}${NOTES[k]||!set?`<small>${[NOTES[k],set?"":"未设置，用默认色"].filter(Boolean).join(" · ")}</small>`:""}</div>
+    <input class="hex" value="${set?v:""}" placeholder="${v}" maxlength="9" spellcheck="false" autocapitalize="characters" autocomplete="off" aria-label="${LABELS[k]||k}色值">
+  </div>`;
+}
+function renderEditor(){
+  const d=editing[editor.id];
+  const others=OTHER.filter(k=>k in LABELS);
+  $("#edList").innerHTML=GROUPS.map(([t,keys])=>`<div class="grp-t">${t}</div><div class="grp">${keys.map(k=>crow(k,d)).join("")}</div>`).join("")
+    +`<details class="more"><summary>${ICON.chev}其他颜色（未实测或新版不生效）</summary><div class="grp">${others.map(k=>crow(k,d)).join("")}</div></details>`
+    +`<p class="alpha-tip">色值可以写 6 位或 8 位。8 位时前两位是透明度：00 全透明，FF 不透明。用色块取色会保留原来的透明度。</p>`;
+  updateEdPreview();
+}
+function updateEdPreview(){$("#edPv").innerHTML=preview(editing[editor.id])}
+$("#edList").addEventListener("input",e=>{
+  const row=e.target.closest(".crow"); if(!row||!editor.id) return;
+  const d=editing[editor.id], k=row.dataset.k, old=d[k]||defOf(k);
+  const hexIn=row.querySelector(".hex"), picker=row.querySelector("input[type=color]");
+  if(e.target===picker){
+    const a=old.length===9?old.slice(1,3):"";
+    d[k]=("#"+a+picker.value.slice(1)).toUpperCase(); hexIn.value=d[k]; hexIn.classList.remove("bad");
+  }else if(e.target===hexIn){
+    let v=hexIn.value.trim().toUpperCase(); if(v&&!v.startsWith("#")) v="#"+v;
+    if(/^#([0-9A-F]{6}|[0-9A-F]{8})$/.test(v)){d[k]=v; hexIn.classList.remove("bad"); picker.value="#"+v.slice(-6)}
+    else{hexIn.classList.toggle("bad",hexIn.value.trim()!=="");return}
+  }else return;
+  row.classList.remove("unset"); row.querySelector(".sw i").style.background=css(d[k]);
+  updateEdPreview();
+});
+$("#edReset").onclick=()=>{const it=byId(editor.id); if(!it) return; editing[editor.id]=parseColors(it.url); renderEditor(); toast("已还原")};
+$("#edSaveAs").onclick=()=>{
+  const it=byId(editor.id); if(!it) return;
+  const url=buildUrl(it.url,editing[it.id]);
+  if(url===it.url){toast("颜色还没有改动");return}
+  if(items.some(i=>i.url===url)){toast("已经有一模一样的配色了");return}
+  const nm=$("#edName").value.trim()||(it.name+"（改）");
+  const n={id:uidGen(),name:nm,note:"",url,createdAt:Date.now(),mine:true};
+  delete editing[it.id]; items.unshift(n); persist(n);
+  q=""; $("#q").value=""; closeSheet(); window.scrollTo({top:0,behavior:"smooth"}); toast(`已另存为“${nm}”`);
+};
+$("#edOverwrite").onclick=()=>{
+  const it=byId(editor.id); if(!it) return;
+  const url=buildUrl(it.url,editing[it.id]);
+  if(url===it.url){toast("颜色还没有改动");return}
+  if(items.some(i=>i.url===url&&i.id!==it.id)){toast("已经有一模一样的配色了");return}
+  it.url=url; delete editing[it.id]; persist(it); closeSheet(); toast("已覆盖保存");
+};
+
+/* ---------- top bar ---------- */
+$("#importOpen").onclick=()=>{$("#hint").className="help";$("#hint").textContent="重复的链接会自动跳过。";openSheet("sh-import")};
+$("#menuBtn").onclick=()=>openSheet("sh-menu");
+$("#importBtn").onclick=()=>doImport($("#input").value);
+$("#sample").onclick=()=>doImport(SAMPLES.map(s=>s[0]+" "+s[1]).join("\n"));
+$("#paste").onclick=async()=>{
+  try{const t=await navigator.clipboard.readText(); if(!t){toast("剪贴板是空的");return} $("#input").value=t; doImport(t)}
+  catch(e){toast("读不到剪贴板，请长按输入框手动粘贴",2600)}
+};
+$("#q").addEventListener("input",e=>{q=e.target.value;render()});
+$("#copyAll").onclick=()=>{if(!items.length){toast("还没有配色可以复制");return} copy(items.map(i=>i.name+" "+i.url).join("\n"),`已复制 ${items.length} 条链接（带名字）`)};
+function syncSeg(){document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===view)))}
+document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(!b)return;view=b.dataset.view;try{localStorage.setItem(VIEW_KEY,view)}catch(_){}syncSeg();render()});
+
+$("#exportBtn").onclick=async()=>{
+  if(!items.length){toast("还没有配色可以备份");return}
+  const d=new Date(), stamp=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+  const name=`配色台备份-${stamp}.json`;
+  const blob=new Blob([JSON.stringify({app:"peisetai",version:1,exportedAt:d.toISOString(),items},null,1)],{type:"application/json"});
+  const file=new File([blob],name,{type:"application/json"});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return}}
+  catch(e){if(e&&e.name==="AbortError")return}
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+};
+$("#importFileBtn").onclick=()=>$("#importFile").click();
+$("#importFile").onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f) return;
+  try{
+    const data=JSON.parse(await f.text()); const list=Array.isArray(data)?data:data.items; if(!Array.isArray(list)) throw 0;
+    const have=new Set(items.map(i=>i.url)); let added=0;
+    for(const it of list){
+      if(!it||typeof it.url!=="string"||!/^shadowrocket:\/\/color\?/i.test(it.url)||have.has(it.url)) continue;
+      items.push({id:uidGen(),name:String(it.name||"未命名配色").slice(0,40),note:String(it.note||""),url:it.url,createdAt:Number(it.createdAt)||Date.now(),mine:!!it.mine});
+      have.add(it.url); added++;
+    }
+    items.sort((a,b)=>b.createdAt-a.createdAt); saveLocal(); render(); closeSheet();
+    toast(added?`已从备份恢复 ${added} 个配色`:"备份里的配色都已经在了",2400);
+  }catch(err){toast("这个文件不是配色台的备份",2400)}
+};
+
+
+syncSeg(); items=loadLocal(); render();
+
+if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+
+</script>
+</body>
+</html>
